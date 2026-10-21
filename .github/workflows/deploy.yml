@@ -1,0 +1,65 @@
+name: Deploy course site to GitHub Pages
+
+# 触发：推到 main 分支，或手动运行
+# 说明：本仓库的线上站点由 gh-pages 分支提供（dist/ 的构建产物）。
+# 这个工作流保留为「从源码完整重建并发布」的备用通道，需要手动触发。
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: 安装构建依赖（仅构建期，产物无依赖）
+        run: npm ci
+
+      - name: 迁移内容（从 legacy/ 生成 content/）
+        run: npm run migrate
+
+      - name: 迁移演示
+        run: npm run migrate:demos
+
+      - name: 内容零损失门禁（不通过即中断发布）
+        run: npm run verify
+
+      - name: 构建静态站
+        env:
+          # 部署到 https://<用户名>.github.io/<仓库名>/ 时改这里；
+          # 若是 <用户名>.github.io 根仓库，改为 https://<用户名>.github.io/
+          SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+        run: npm run build
+
+      - name: 体积预算检查
+        run: npm run budget
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

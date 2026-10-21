@@ -1,0 +1,26 @@
+/* ============================================================
+ * fonts.css —— 自托管字体（离线可用）
+ *
+ * 两族，职责清楚、彼此区分度足够：
+ *   Instrument Serif —— 显示级（拉丁与数字）。高对比衬线，气质接近老星图册，
+ *                       用在标题/标签/数字上，避免 Inter 那种「到处都用的默认脸」。
+ *   Inter            —— 正文与界面。可变字体，一个字重全覆盖。
+ * 中文不引 Web 字体（完整中文字体包会给产物加数 MB，与离线/体积预算冲突），
+ * 显示级中文走 雅黑 Light / 苹方，见 tokens.css 的 --font-display。
+ * ============================================================ */
+
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/instrument-serif-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/inter-var-latin.woff2") format("woff2-variations");
+}

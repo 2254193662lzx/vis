@@ -1,0 +1,612 @@
+{
+  "num": 5,
+  "slug": "lesson-05",
+  "title": {
+    "zh": "时序数据可视化",
+    "en": "Time Series"
+  },
+  "rawTitle": {
+    "zh": "第 5 章 时序数据可视化",
+    "en": "Ch 5 · Time Series"
+  },
+  "sections": [
+    {
+      "id": "ch-5-1",
+      "num": "5.1",
+      "slug": "5-1",
+      "title": {
+        "zh": "时间属性",
+        "en": "Time Attributes"
+      },
+      "subtitle": {
+        "zh": "时间有 5 个核心属性：有序 / 连续 / 周期 / 独立于空间 / 结构性。每个属性都影响可视化设计。",
+        "en": "Time has 5 core properties: ordered / continuous / cyclic / independent of space / structural. Each property shapes visualization design."
+      },
+      "tabs": {
+        "explain": [
+          {
+            "type": "h3",
+            "zh": "你的原案例",
+            "en": "Your Original Case"
+          },
+          {
+            "type": "p",
+            "zh": "原 6.1 节列出 5 个时间属性，没有可视化。这章把这 5 个属性变成可交互卡片。",
+            "en": "Original section 6.1 listed the 5 time properties without any visualization. This chapter turns those 5 properties into interactive cards."
+          },
+          {
+            "type": "h3",
+            "zh": "嵌入陈为教材理论",
+            "en": "Embedding Chen Wei's Textbook Theory"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>有序性</strong>：时间是有序的，两个事件有先后次序，与因果关系紧密相连。",
+              "<strong>连续性</strong>：时间连续，两个时间点之间总存在另一个时间点。",
+              "<strong>周期性</strong>：自然过程常有循环规律（季节、昼夜），可采用循环时间域。",
+              "<strong>独立于空间</strong>：时间与空间紧相关，但科学过程大多独立处理。",
+              "<strong>结构性</strong>：时间尺度分年/月/日/时/分/秒，分割既有自然反映（昼夜）也有人为定义（60 秒）。"
+            ],
+            "en": [
+              "<strong>Order</strong>: Time is ordered—any two events have a before/after, tightly linked to causality.",
+              "<strong>Continuity</strong>: Time is continuous—between any two moments there is always another moment.",
+              "<strong>Periodicity</strong>: Natural processes often follow cyclic patterns (seasons, day/night)—a cyclic time domain can be used.",
+              "<strong>Independence from space</strong>: Time is tightly coupled with space, but scientific processes usually treat them independently.",
+              "<strong>Structure</strong>: Time scales split into year / month / day / hour / minute / second—some divisions reflect nature (day/night), others are human convention (60 seconds)."
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "为什么 5 个属性都重要？",
+            "en": "Why do all 5 properties matter?"
+          },
+          {
+            "type": "p",
+            "zh": "设计时序图前先想清楚这 5 个属性，能避免常见错误：",
+            "en": "Thinking through these 5 properties before designing a time series chart avoids common pitfalls:"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>有序性</strong>缺失 → 散点图错位成噪声",
+              "<strong>连续性</strong>混淆 → 离散数据用错连线",
+              "<strong>周期性</strong>忽略 → 季节趋势被\"抹平\"",
+              "<strong>结构性</strong>不匹配 → 工作日/周末、闰年都出错"
+            ],
+            "en": [
+              "Missing <strong>order</strong> → scatter plot misaligned into noise",
+              "Confused <strong>continuity</strong> → discrete data wrongly connected",
+              "Ignored <strong>periodicity</strong> → seasonal trends “flattened out”",
+              "Mismatched <strong>structure</strong> → weekdays/weekends, leap years all go wrong"
+            ]
+          }
+        ],
+        "code": [
+          {
+            "type": "h3",
+            "zh": "⭐ 关键代码",
+            "en": "⭐ Key Code"
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 1：5 个属性以对象数组组织</strong>",
+            "en": "⭐ <strong>Key Point 1: the 5 properties are organized as an array of objects</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// ⭐ 单一数据源：5 个属性 + 含义 + 例子 + 颜色\r\nconst TIME_ATTRIBUTES = [\r\n  { key: 'ordered',          name: '有序性',     icon: '↗',\r\n    desc: '时间是有序的。两个事件发生的时间有先后次序，与因果关系紧密相连。',\r\n    example: '火车时刻表、事件日志、git commit history', color: '#3b82f6' },\r\n  { key: 'continuous',       name: '连续性',     icon: '∞',\r\n    desc: '时间是连续的。两个时间点之间总存在另一个时间点。',\r\n    example: '实时传感器数据（温度、心率）、流式数据流', color: '#10b981' },\r\n  { key: 'periodic',         name: '周期性',     icon: '🔁',\r\n    desc: '许多自然过程有循环规律（季节、昼夜）。可采用循环时间域表示。',\r\n    example: '24h 体温、12 个月气温、年周期销售', color: '#f59e0b' },\r\n  { key: 'spatial_independent', name: '独立于空间', icon: '✂️',\r\n    desc: '时间与空间紧相关，但科学过程大多将它们独立处理。',\r\n    example: '折线图 x 轴只用时间、y 轴只用度量', color: '#8b5cf6' },\r\n  { key: 'structured',       name: '结构性',     icon: '📐',\r\n    desc: '时间尺度分年/月/日/时/分/秒，分割既有自然反映（昼夜）也有人为定义。',\r\n    example: '日历/周排列、闰年调整、工作日 vs 周末', color: '#ec4899' }\r\n];",
+            "text": "// ⭐ 单一数据源：5 个属性 + 含义 + 例子 + 颜色 const TIME_ATTRIBUTES = [ { key: 'ordered', name: '有序性', icon: '↗', desc: '时间是有序的。两个事件发生的时间有先后次序，与因果关系紧密相连。', example: '火车时刻表、事件日志、git commit history', color: '#3b82f6' }, { key: 'continuous', name: '连续性', icon: '∞', desc: '时间是连续的。两个时间点之间总存在另一个时间点。', example: '实时传感器数据（温度、心率）、流式数据流', color: '#10b981' }, { key: 'periodic', name: '周期性', icon: '🔁', desc: '许多自然过程有循环规律（季节、昼夜）。可采用循环时间域表示。', example: '24h 体温、12 个月气温、年周期销售', color: '#f59e0b' }, { key: 'spatial_independent', name: '独立于空间', icon: '✂️', desc: '时间与空间紧相关，但科学过程大多将它们独立处理。', example: '折线图 x 轴只用时间、y 轴只用度量', color: '#8b5cf6' }, { key: 'structured', name: '结构性', icon: '📐', desc: '时间尺度分年/月/日/时/分/秒，分割既有自然反映（昼夜）也有人为定义。', example: '日历/周排列、闰年调整、工作日 vs 周末', color: '#ec4899' } ];",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ 对象数组 = 一份数据 + 多处使用。卡片渲染、详细解释、筛选过滤都从同一数据源派生，避免改一处漏一处。",
+            "en": "⭐ Array of objects = one data source, many uses. Card rendering, detailed explanations, and filtering all derive from the same source—so you never miss a spot when editing."
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 2：d3.timeDay.range 生成等间距日序列</strong>",
+            "en": "⭐ <strong>Key Point 2: d3.timeDay.range generates an equally-spaced day sequence</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// 生成 2024-01-01 到 2024-12-31 之间所有日期（366 天）\r\nconst days = d3.timeDay.range(new Date(2024, 0, 1), new Date(2025, 0, 1));\r\n// 输出：[Date(2024-01-01), Date(2024-01-02), ..., Date(2024-12-31)]\r\nconsole.log(days.length);  // 366（闰年）",
+            "text": "// 生成 2024-01-01 到 2024-12-31 之间所有日期（366 天） const days = d3.timeDay.range(new Date(2024, 0, 1), new Date(2025, 0, 1)); // 输出：[Date(2024-01-01), Date(2024-01-02), ..., Date(2024-12-31)] console.log(days.length); // 366（闰年）",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ <code>d3.timeDay</code> 是 d3-time 模块的核心：<code>range(start, stop)</code> 返回两个时刻之间所有\"日\"的离散数组，<code>offset(date, n)</code> 加减 n 天。<strong>结构性（structural）就靠这种\"时间尺度\"操作实现</strong>。",
+            "en": "⭐ <code>d3.timeDay</code> is the core of the d3-time module: <code>range(start, stop)</code> returns a discrete array of every “day” between two moments; <code>offset(date, n)</code> adds or subtracts n days. <strong>Structure (structural) is achieved through this kind of “time-scale” operation</strong>."
+          }
+        ],
+        "demo": [
+          {
+            "type": "demo",
+            "ref": "d-5-1"
+          }
+        ]
+      },
+      "unpaired": []
+    },
+    {
+      "id": "ch-5-2",
+      "num": "5.2",
+      "slug": "5-2",
+      "title": {
+        "zh": "标准时间可视化（折线图）",
+        "en": "Standard Time Viz (Line Chart)"
+      },
+      "subtitle": {
+        "zh": "x 轴 = 时间，y 轴 = 度量。最常见的时序图：法国人名 1900-2020 的使用频率。",
+        "en": "x-axis = time, y-axis = measure. The most common time series chart: frequency of French names from 1900–2020."
+      },
+      "tabs": {
+        "explain": [
+          {
+            "type": "h3",
+            "zh": "你的原案例",
+            "en": "Your Original Case"
+          },
+          {
+            "type": "p",
+            "zh": "原 6.2.1 节用折线图展示法国几十年人名（Marie / Jean / Camille）的使用频率变化。<br> 原始页面附带\"词云 + 鼠标高亮 + 时间段筛选\"，但代码只给了关键折线段。",
+            "en": "Original section 6.2.1 used line charts to show usage-frequency changes of French names (Marie / Jean / Camille) over decades.<br>The original page bundled “word cloud + hover highlight + time-range filter,” but the code only included the key line segments."
+          },
+          {
+            "type": "h3",
+            "zh": "嵌入陈为教材理论",
+            "en": "Embedding Chen Wei's Textbook Theory"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>标准时序图本质</strong>：二维线图，x = 时间，y = 度量。优势是<strong>在线性时间域</strong>中的变化趋势一目了然。",
+              "<strong>缺点</strong>：难以表达<strong>周期性</strong>——所以才有了 5.3 日历图和 5.4 螺旋图。",
+              "<strong>交互</strong>：鼠标 hover 高亮、tip 显示、筛选时间段——是数据新闻标配。",
+              "<strong>实战选择</strong>：数据点数 ≤ 50 用 linear；点数 50-500 用 monotoneX / curveCatmullRom；点数 &gt; 500 才考虑面积 / 箱形。"
+            ],
+            "en": [
+              "<strong>Essence of the standard time series chart</strong>: a 2D line chart with x = time, y = measure. The advantage is that <strong>change trends in a linear time domain</strong> are immediately clear.",
+              "<strong>Drawback</strong>: hard to express <strong>periodicity</strong>—hence section 5.3 calendar heatmap and section 5.4 spiral.",
+              "<strong>Interaction</strong>: hover highlight, tooltip, time-range filtering—the data-journalism standard.",
+              "<strong>Choosing in practice</strong>: ≤50 points use linear; 50–500 use monotoneX / curveCatmullRom; &gt;500 consider area / box plot."
+            ]
+          }
+        ],
+        "code": [
+          {
+            "type": "h3",
+            "zh": "⭐ 关键代码",
+            "en": "⭐ Key Code"
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 1：d3.timeParse + d3.timeFormat 时间格式化</strong>",
+            "en": "⭐ <strong>Key Point 1: d3.timeParse + d3.timeFormat for time formatting</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// ⭐ 时间字符串 → Date 对象\r\nconst parseYear = d3.timeParse('%Y');        // '1965' → Date\r\n// 时间 Date → 字符串\r\nconst formatYear = d3.timeFormat('%Y');     // Date → '1965'\r\n\r\n// 典型 timeFormat tokens\r\n//   %Y 4 位年    %y 2 位年\r\n//   %m 月份 01-12   %B 月名 January\r\n//   %d 日 01-31    %a 星期 Sun\r\n//   %H 时 00-23    %M 分 00-59\r\n//   %L 毫秒 000-999",
+            "text": "// ⭐ 时间字符串 → Date 对象 const parseYear = d3.timeParse('%Y'); // '1965' → Date // 时间 Date → 字符串 const formatYear = d3.timeFormat('%Y'); // Date → '1965' // 典型 timeFormat tokens // %Y 4 位年 %y 2 位年 // %m 月份 01-12 %B 月名 January // %d 日 01-31 %a 星期 Sun // %H 时 00-23 %M 分 00-59 // %L 毫秒 000-999",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ d3-time 是 d3 的核心模块。d3.timeParse / timeFormat 处理<strong>任何时序数据必须先掌握</strong>——尤其 CSV 里年份是字符串\"2024\"而非 Date 对象。",
+            "en": "⭐ d3-time is a core d3 module. d3.timeParse / timeFormat must be mastered first when handling <strong>any time series data</strong>—especially since CSV years are strings like “2024,” not Date objects."
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 2：d3.scaleTime 时间轴</strong>",
+            "en": "⭐ <strong>Key Point 2: d3.scaleTime time axis</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// 时间轴 = 数值轴的特化版（Date 在底层就是数字）\r\nconst xScale = d3.scaleTime()\r\n  .domain([new Date(1900, 0, 1), new Date(2020, 11, 31)])\r\n  .range([0, innerW]);\r\n// d3.axisBottom 自动按\"年/十年/世纪\"切换 tick\r\nsvg.append('g')\r\n  .attr('transform', `translate(${M.l},${M.t + innerH})`)\r\n  .call(d3.axisBottom(xScale).ticks(10));",
+            "text": "// 时间轴 = 数值轴的特化版（Date 在底层就是数字） const xScale = d3.scaleTime() .domain([new Date(1900, 0, 1), new Date(2020, 11, 31)]) .range([0, innerW]); // d3.axisBottom 自动按\"年/十年/世纪\"切换 tick svg.append('g') .attr('transform', `translate(${M.l},${M.t + innerH})`) .call(d3.axisBottom(xScale).ticks(10));",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ <code>scaleTime</code> 比 <code>scaleLinear</code> 多两个能力：1) 自动按时间跨度选 tick 间隔（10 年 / 12 月 / 30 天）；2) 时区处理（实际项目记得设 <code>utc()</code>）。",
+            "en": "⭐ <code>scaleTime</code> has two extra capabilities over <code>scaleLinear</code>: 1) auto-pick tick intervals based on time span (10 years / 12 months / 30 days); 2) timezone handling (in real projects, remember to set <code>utc()</code>)."
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 3：hover 高亮 + tip</strong>",
+            "en": "⭐ <strong>Key Point 3: hover highlight + tooltip</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// 透明覆盖层捕获鼠标事件\r\nconst focus = svg.append('g').style('display', 'none');\r\nfocus.append('line')             // 垂直参考线\r\n  .attr('class', 'hover-line')\r\n  .attr('y1', 0).attr('y2', innerH);\r\nfocus.append('circle')           // 圆点\r\n  .attr('r', 5).attr('fill', 'steelblue');\r\nfocus.append('text')             // tip\r\n  .attr('class', 'tip');\r\n\r\nsvg.append('rect')               // 覆盖矩形\r\n  .attr('width', innerW).attr('height', innerH)\r\n  .attr('fill', 'none').attr('pointer-events', 'all')\r\n  .on('mouseover', () =&gt; focus.style('display', null))\r\n  .on('mouseout',  () =&gt; focus.style('display', 'none'))\r\n  .on('mousemove', (event) =&gt; {\r\n    const xm = d3.pointer(event)[0];\r\n    const date = xScale.invert(xm - M.l);\r\n    // bisect 找最近点\r\n    const i = d3.bisector(d =&gt; d.year).left(series, date);\r\n    const d = series[i];\r\n    focus.attr('transform', `translate(${xScale(d.year)},0)`);\r\n  });",
+            "text": "// 透明覆盖层捕获鼠标事件 const focus = svg.append('g').style('display', 'none'); focus.append('line') // 垂直参考线 .attr('class', 'hover-line') .attr('y1', 0).attr('y2', innerH); focus.append('circle') // 圆点 .attr('r', 5).attr('fill', 'steelblue'); focus.append('text') // tip .attr('class', 'tip'); svg.append('rect') // 覆盖矩形 .attr('width', innerW).attr('height', innerH) .attr('fill', 'none').attr('pointer-events', 'all') .on('mouseover', () =&gt; focus.style('display', null)) .on('mouseout', () =&gt; focus.style('display', 'none')) .on('mousemove', (event) =&gt; { const xm = d3.pointer(event)[0]; const date = xScale.invert(xm - M.l); // bisect 找最近点 const i = d3.bisector(d =&gt; d.year).left(series, date); const d = series[i]; focus.attr('transform', `translate(${xScale(d.year)},0)`); });",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ 通用 hover 模板：透明矩形 + focus g（line + circle + text）。d3.bisector 找最近点比手写循环快且准。",
+            "en": "⭐ Generic hover template: transparent rect + focus g (line + circle + text). d3.bisector finds the nearest point faster and more accurately than a hand-written loop."
+          }
+        ],
+        "demo": [
+          {
+            "type": "demo",
+            "ref": "d-5-2"
+          }
+        ]
+      },
+      "unpaired": []
+    },
+    {
+      "id": "ch-5-3",
+      "num": "5.3",
+      "slug": "5-3",
+      "title": {
+        "zh": "日历热图（van Wijk）",
+        "en": "Calendar Heatmap (van Wijk)"
+      },
+      "subtitle": {
+        "zh": "以\"年=行 / 周=列\"展示全年数据，发现周期性 + 周内趋势 + 节假日异常。",
+        "en": "Display a full year of data with “year = row / week = column”—reveal periodicity + weekly trends + holiday anomalies."
+      },
+      "tabs": {
+        "explain": [
+          {
+            "type": "h3",
+            "zh": "你的原案例",
+            "en": "Your Original Case"
+          },
+          {
+            "type": "p",
+            "zh": "原 6.2.2 节用日历热图展示 2024 年北京每日最高温度。每月之间用红线分隔。",
+            "en": "Original section 6.2.2 used a calendar heatmap to show Beijing’s daily maximum temperature in 2024. Red lines separate each month."
+          },
+          {
+            "type": "h3",
+            "zh": "嵌入陈为教材理论",
+            "en": "Embedding Chen Wei's Textbook Theory"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>日历热图 (Calendar Heatmap)</strong>：<strong>van Wijk 2008</strong> 提出，x = 周（年内的第几周），y = 星期几，颜色 = 数值。",
+              "<strong>适用场景</strong>：长时序（年）+ 周期性（星期 / 月）+ 异常检测（节假日、工作日 vs 周末）。",
+              "<strong>设计要点</strong>： <ul> <li>每周从周日（或周一）开始——影响\"周末\"在视觉上的位置</li> <li>月份之间用红线分隔——比 7×53 网格更易读</li> <li>colormap 用顺序型（如 Viridis）——见 <a href=\"../lesson-03/#ch-3-2\">第 3 章 3.2 colormap</a></li> </ul>"
+            ],
+            "en": [
+              "<strong>Calendar Heatmap</strong>: proposed by <strong>van Wijk 2008</strong>, x = week (week-of-year), y = day of week, color = value.",
+              "<strong>Use cases</strong>: long time series (years) + periodicity (weekday / month) + anomaly detection (holidays, weekday vs weekend).",
+              "<strong>Design Considerations</strong>: <ul> <li>Each week starts on Sunday (or Monday)—this affects where the “weekend” sits visually</li> <li>Separate months with red lines—more readable than a 7×53 grid</li> <li>Use a sequential colormap (e.g., Viridis)—see <a href=\"../lesson-03/#ch-3-2\">Chapter 3 §3.2 Colormap</a></li> </ul>"
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "isMonthDivider 的巧妙之处",
+            "en": "The cleverness of isMonthDivider"
+          },
+          {
+            "type": "p",
+            "zh": "判断 7 天前与今天是否同月——是则同月分割线，否则需要画月线。这是日历可视化的核心算法。",
+            "en": "Check whether 7 days ago and today are in the same month—if so, draw a same-month separator; otherwise draw a month-divider. This is the core algorithm of calendar visualization."
+          }
+        ],
+        "code": [
+          {
+            "type": "h3",
+            "zh": "⭐ 关键代码",
+            "en": "⭐ Key Code"
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 1：d3.timeDay.range + d3.timeFormat.isoDate</strong>",
+            "en": "⭐ <strong>Key Point 1: d3.timeDay.range + d3.timeFormat.isoDate</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// ⭐ 把\"年\"拆成\"日\"列表\r\nconst days = d3.timeDay.range(\r\n  new Date(2024, 0, 1),         // 2024-01-01\r\n  new Date(2025, 0, 1)          // 2025-01-01\r\n).map(d =&gt; ({\r\n  date:  d,\r\n  value: byKey.get(d3.timeFormat('%Y-%m-%d')(d)) ?? 0\r\n}));\r\n// 现在 days.length === 366（2024 闰年）",
+            "text": "// ⭐ 把\"年\"拆成\"日\"列表 const days = d3.timeDay.range( new Date(2024, 0, 1), // 2024-01-01 new Date(2025, 0, 1) // 2025-01-01 ).map(d =&gt; ({ date: d, value: byKey.get(d3.timeFormat('%Y-%m-%d')(d)) ?? 0 })); // 现在 days.length === 366（2024 闰年）",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ <code>d3.timeDay.range(start, stop)</code> 是\"日内连续性 + 结构性\"两个属性的合击——自动按日粒度切分整年，<strong>闰年 366 / 平年 365 自动正确</strong>。",
+            "en": "⭐ <code>d3.timeDay.range(start, stop)</code> combines “intra-day continuity + structure”—it automatically slices a whole year by day, with <strong>leap-year 366 / common-year 365 handled correctly</strong>."
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 2：周日为起点布局</strong>",
+            "en": "⭐ <strong>Key Point 2: Sunday-first layout</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "function weekColSunday(date) {\r\n  // 周日为每列起点 (getDay()=0)\r\n  return Math.floor((d3.timeDay.count(\r\n    d3.timeYear.floor(date), date)) / 7);\r\n}\r\nfunction dayIndexSunday(date) {\r\n  return date.getDay();    // 0=周日, 1=周一, ..., 6=周六\r\n}\r\n\r\n// 渲染每个日格\r\ng.selectAll('rect.cell')\r\n  .data(days).join('rect')\r\n  .attr('class', 'cell')\r\n  .attr('width',  cellSize)\r\n  .attr('height', cellSize)\r\n  .attr('x', d =&gt; weekColSunday(d.date) * cellSize)\r\n  .attr('y', d =&gt; dayIndexSunday(d.date) * cellSize)\r\n  .attr('rx', 2).attr('ry', 2)\r\n  .attr('fill', d =&gt; color(d.value));",
+            "text": "function weekColSunday(date) { // 周日为每列起点 (getDay()=0) return Math.floor((d3.timeDay.count( d3.timeYear.floor(date), date)) / 7); } function dayIndexSunday(date) { return date.getDay(); // 0=周日, 1=周一, ..., 6=周六 } // 渲染每个日格 g.selectAll('rect.cell') .data(days).join('rect') .attr('class', 'cell') .attr('width', cellSize) .attr('height', cellSize) .attr('x', d =&gt; weekColSunday(d.date) * cellSize) .attr('y', d =&gt; dayIndexSunday(d.date) * cellSize) .attr('rx', 2).attr('ry', 2) .attr('fill', d =&gt; color(d.value));",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ <strong>周日 vs 周一布局</strong>是日历热图的设计分歧：周日为起点是<strong>英文日历传统</strong>（2024-01-01 是周一，所在列第 1 行往下是 周一→周六，最末行是周日）。中文场景常改成周一起点。",
+            "en": "⭐ <strong>Sunday vs Monday layout</strong> is a calendar heatmap design fork: Sunday-first is the <strong>English calendar convention</strong> (2024-01-01 is Monday, so in its column row 1 is Mon→Sat and the last row is Sun). Chinese settings often switch to Monday-first."
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 3：isMonthDivider 月份分隔</strong>",
+            "en": "⭐ <strong>Key Point 3: isMonthDivider month separation</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// ⭐ 巧妙算法：判断 7 天前是否同月\r\nfunction isMonthDivider(date) {\r\n  const sevenDaysAgo = d3.timeDay.offset(date, -7);\r\n  return date.getFullYear() !== sevenDaysAgo.getFullYear()\r\n      || date.getMonth()    !== sevenDaysAgo.getMonth();\r\n}\r\n// 同月：不画分割线；跨月：画一条上边框\r\n\r\nfunction isFirstDayOfMonth(date) {\r\n  return date.getDay() !== 0         // 排除周日（被周列开头替代）\r\n      &amp;&amp; date.getMonth() &gt; 0         // 排除一月（画上边框没意义）\r\n      &amp;&amp; date.getDate() === 1;\r\n}",
+            "text": "// ⭐ 巧妙算法：判断 7 天前是否同月 function isMonthDivider(date) { const sevenDaysAgo = d3.timeDay.offset(date, -7); return date.getFullYear() !== sevenDaysAgo.getFullYear() || date.getMonth() !== sevenDaysAgo.getMonth(); } // 同月：不画分割线；跨月：画一条上边框 function isFirstDayOfMonth(date) { return date.getDay() !== 0 // 排除周日（被周列开头替代） &amp;&amp; date.getMonth() &gt; 0 // 排除一月（画上边框没意义） &amp;&amp; date.getDate() === 1; }",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ 不用循环\"找每个月的第一天\"，改用\"7 天前是否同月\"——简洁又正确，<strong>O(n) 一遍扫描即可</strong>。这是日历热图作者 van Wijk 的精妙算法。",
+            "en": "⭐ Instead of looping to “find each month’s first day,” use “are 7 days ago and today in the same month?”—simple and correct, just an <strong>O(n) single-pass scan</strong>. This is the elegant algorithm from calendar heatmap author van Wijk."
+          }
+        ],
+        "demo": [
+          {
+            "type": "demo",
+            "ref": "d-5-3"
+          }
+        ]
+      },
+      "unpaired": []
+    },
+    {
+      "id": "ch-5-4",
+      "num": "5.4",
+      "slug": "5-4",
+      "title": {
+        "zh": "周期时间可视化（阿基米德螺旋）",
+        "en": "Cyclic Time Viz (Archimedean Spiral)"
+      },
+      "subtitle": {
+        "zh": "将时间沿圆周排列（螺旋 = 圆 + 持续展开）。发现周期性：每个回路 = 一个周期。",
+        "en": "Place time along a circle (spiral = circle + continuous unwinding). Reveal periodicity: each loop = one cycle."
+      },
+      "tabs": {
+        "explain": [
+          {
+            "type": "h3",
+            "zh": "你的原案例",
+            "en": "Your Original Case"
+          },
+          {
+            "type": "p",
+            "zh": "原 6.2.3 节用阿基米德螺旋（等速螺旋）布局日期，每个回路代表 1 年 / 1 月 / 1 周。每个日期对应螺旋上的一个扇环。",
+            "en": "Original section 6.2.3 used an Archimedean spiral (uniform-velocity spiral) to lay out dates, with each loop representing 1 year / 1 month / 1 week. Each date corresponds to a sector ring on the spiral."
+          },
+          {
+            "type": "h3",
+            "zh": "嵌入陈为教材理论",
+            "en": "Embedding Chen Wei's Textbook Theory"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>螺旋 vs 折线</strong>：折线在线性时间域表现\"趋势\"，但难以表现\"周期\"；螺旋沿圆周重复，能突出周期性。",
+              "<strong>阿基米德螺旋 (Archimedean Spiral)</strong>：<code>r = a + bθ</code>，<strong>等速展开</strong>（每转一圈半径增加常量 b）。",
+              "<strong>动态 Δθ 算法</strong>：原文档的精妙点——<code>Δθ = boxSize / √(b² + r²)</code>，<strong>让每个扇环的弧长近似相等</strong>，保持视觉一致性。",
+              "<strong>实战取舍</strong>：螺旋适合\"年/季节/周\"的循环，<strong>不适合\"无周期\"或\"周期太长\"</strong>。"
+            ],
+            "en": [
+              "<strong>Spiral vs line</strong>: a line captures “trend” in a linear time domain but struggles with “cycle”; a spiral repeats around the circle, highlighting periodicity.",
+              "<strong>Archimedean Spiral</strong>: <code>r = a + bθ</code>, with <strong>uniform unwinding</strong> (radius increases by a constant b per revolution).",
+              "<strong>Dynamic Δθ algorithm</strong>: the original document’s elegant move—<code>Δθ = boxSize / √(b² + r²)</code>, which <strong>keeps each sector ring’s arc length roughly equal</strong>, preserving visual consistency.",
+              "<strong>Practical trade-offs</strong>: spirals suit “year / season / week” cycles, but are <strong>unsuitable when there is “no cycle” or “the cycle is too long”</strong>."
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "关键路径生成",
+            "en": "Key Path Generation"
+          },
+          {
+            "type": "p",
+            "zh": "每个日期对应螺旋上的一个扇环——4 个关键点：起点外/终点外/终点内/起点内，闭合回起点。",
+            "en": "Each date maps to a sector ring on the spiral—4 key points: outer start / outer end / inner end / inner start, closing back to the start."
+          }
+        ],
+        "code": [
+          {
+            "type": "h3",
+            "zh": "⭐ 关键代码",
+            "en": "⭐ Key Code"
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 1：极坐标 → 笛卡尔坐标</strong>",
+            "en": "⭐ <strong>Key Point 1: polar → Cartesian coordinates</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// ⭐ 阿基米德螺旋公式：r = a + bθ\r\nconst boxSize = 32;                  // 每环宽度\r\nconst coilGap = boxSize * 1.2;       // 螺旋间距\r\nconst b = coilGap / (2 * Math.PI);   // 半径增长系数\r\nconst startRadius = 100;\r\nlet theta = (startRadius - 0) / b;   // 起始角度\r\n\r\nfunction pos(t) {                    // t: 角度（弧度）\r\n  const r = 0 + b * t;\r\n  return {\r\n    x: r * Math.cos(t),              // 极坐标转笛卡尔\r\n    y: r * Math.sin(t),\r\n    r\r\n  };\r\n}",
+            "text": "// ⭐ 阿基米德螺旋公式：r = a + bθ const boxSize = 32; // 每环宽度 const coilGap = boxSize * 1.2; // 螺旋间距 const b = coilGap / (2 * Math.PI); // 半径增长系数 const startRadius = 100; let theta = (startRadius - 0) / b; // 起始角度 function pos(t) { // t: 角度（弧度） const r = 0 + b * t; return { x: r * Math.cos(t), // 极坐标转笛卡尔 y: r * Math.sin(t), r }; }",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ 极坐标 = (r, θ)，笛卡尔 = (x, y)，<strong>θ 每增 2π，r 增 b</strong>——这就形成\"每转一圈外扩一格\"的螺旋。如果 b=0，就是普通圆周。",
+            "en": "⭐ Polar = (r, θ), Cartesian = (x, y); <strong>θ grows by 2π, r grows by b</strong>—this produces a “one ring out per loop” spiral. If b=0, it becomes an ordinary circle."
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 2：动态角度增量</strong>",
+            "en": "⭐ <strong>Key Point 2: dynamic angle increment</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// ⭐ 弧长近似相等：Δθ = boxSize / √(b² + r²)\r\nfunction angleDelta(currentRadius) {\r\n  return boxSize / Math.sqrt(b * b + currentRadius * currentRadius);\r\n}\r\n\r\n// 沿螺旋前进 N 天\r\nlet t = startTheta;\r\nfor (let day = 0; day &lt; 365; day++) {\r\n  const p = pos(t);\r\n  // ...画第 day 天的扇环\r\n  t += angleDelta(p.r);   // 动态加角度\r\n}",
+            "text": "// ⭐ 弧长近似相等：Δθ = boxSize / √(b² + r²) function angleDelta(currentRadius) { return boxSize / Math.sqrt(b * b + currentRadius * currentRadius); } // 沿螺旋前进 N 天 let t = startTheta; for (let day = 0; day &lt; 365; day++) { const p = pos(t); // ...画第 day 天的扇环 t += angleDelta(p.r); // 动态加角度 }",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ 这条公式是原文档的核心洞察：<strong>当半径增大时，相同角度对应的弧长会变长</strong>，所以要让 Δθ 随半径增大而减小——这样\"每个扇环的弧长\"近似相等，视觉上整齐一致。",
+            "en": "⭐ This formula is the original document’s core insight: <strong>as the radius grows, the same angle spans a longer arc</strong>, so Δθ must shrink as r grows—keeping each sector ring’s arc length roughly equal and visually uniform."
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 3：扇环路径生成</strong>",
+            "en": "⭐ <strong>Key Point 3: sector-ring path generation</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// ⭐ 4 关键点：起点外 → 终点外 → 终点内 → 起点内\r\nfunction segmentPath(t0, t1) {\r\n  const coords = (t, sign) =&gt; {\r\n    const r = pos(t).r + sign * coilGap / 2;  // sign=+1 外圈 / -1 内圈\r\n    return [r * Math.cos(t), r * Math.sin(t)];\r\n  };\r\n  const [x0o, y0o] = coords(t0, +1);\r\n  const [x1o, y1o] = coords(t1, +1);\r\n  const [x1i, y1i] = coords(t1, -1);\r\n  const [x0i, y0i] = coords(t0, -1);\r\n  return `M ${x0o} ${y0o} L ${x1o} ${y1o} L ${x1i} ${y1i} L ${x0i} ${y0i} Z`;\r\n}\r\n// d 属性 = 'M ... L ... L ... L ... Z'，4 个 L 描述一个 4 边形",
+            "text": "// ⭐ 4 关键点：起点外 → 终点外 → 终点内 → 起点内 function segmentPath(t0, t1) { const coords = (t, sign) =&gt; { const r = pos(t).r + sign * coilGap / 2; // sign=+1 外圈 / -1 内圈 return [r * Math.cos(t), r * Math.sin(t)]; }; const [x0o, y0o] = coords(t0, +1); const [x1o, y1o] = coords(t1, +1); const [x1i, y1i] = coords(t1, -1); const [x0i, y0i] = coords(t0, -1); return `M ${x0o} ${y0o} L ${x1o} ${y1o} L ${x1i} ${y1i} L ${x0i} ${y0i} Z`; } // d 属性 = 'M ... L ... L ... L ... Z'，4 个 L 描述一个 4 边形",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ SVG path 极简：<code>M</code> 移动、<code>L</code> 画线、<code>Z</code> 闭合。手算 4 顶点比用 d3.arc() 灵活（d3.arc 是从圆弧角度算的，对螺旋无法直接用）。",
+            "en": "⭐ SVG path in essence: <code>M</code> move, <code>L</code> line, <code>Z</code> close. Computing the 4 vertices by hand is more flexible than d3.arc() (which is built for circular arcs and cannot directly handle a spiral)."
+          }
+        ],
+        "demo": [
+          {
+            "type": "demo",
+            "ref": "d-5-4"
+          }
+        ]
+      },
+      "unpaired": []
+    },
+    {
+      "id": "ch-5-5",
+      "num": "5.5",
+      "slug": "5-5",
+      "title": {
+        "zh": "Storyline 时间线（侏罗纪公园）",
+        "en": "Storyline (Jurassic Park)"
+      },
+      "subtitle": {
+        "zh": "多角色叙事：每条线 = 一个角色 / 组织 / 进程，y 轴位置 = 聚散关系，时间 = 故事进展。",
+        "en": "Multi-character narrative: each line = one character / organization / process, y-position = togetherness vs apartness, time = story progress."
+      },
+      "tabs": {
+        "explain": [
+          {
+            "type": "h3",
+            "zh": "你的原案例",
+            "en": "Your Original Case"
+          },
+          {
+            "type": "p",
+            "zh": "原 6.2.4 节用《侏罗纪公园》5 个角色（Alan / T-REX / Raptors / Malcolm / Dilophosaurus）做 Storyline 时间线。事件层用红色半透明圆圈标注关键冲突。",
+            "en": "Original section 6.2.4 used five characters from <em>Jurassic Park</em> (Alan / T-REX / Raptors / Malcolm / Dilophosaurus) to build a Storyline timeline. The event layer marks key conflicts with semi-transparent red circles."
+          },
+          {
+            "type": "h3",
+            "zh": "嵌入陈为教材理论",
+            "en": "Embedding Chen Wei's Textbook Theory"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>Storyline 起源</strong>：2008 年斯坦福大学 Ogawa &amp; Ma 提出，原本用于电影/学术合作者关系网。",
+              "<strong>核心</strong>：把每个角色/组织/进程抽象为\"生命线\"，<strong>线靠近 = 角色相遇 / 冲突，线分开 = 角色分离</strong>。",
+              "<strong>3 大元素</strong>： <ol> <li><strong>时间尺度映射</strong>：电影时长 → SVG 宽度，x 轴严格按比例对齐</li> <li><strong>Catmull-Rom 样条</strong>：<code>curveCatmullRom.alpha(0.5)</code> 张力系数 0.5，\"自然流动\"但不\"过度弯曲\"</li> <li><strong>事件层</strong>：半透明红圈 + 文字，标注关键转折点</li> </ol>",
+              "<strong>应用场景</strong>：电影分析、案件多人时间线、体育比赛互动、项目任务交接。"
+            ],
+            "en": [
+              "<strong>Storyline origin</strong>: introduced by Ogawa &amp; Ma at Stanford in 2008, originally for movie / academic collaborator networks.",
+              "<strong>Core idea</strong>: abstract each character / organization / process as a “life line,” where <strong>lines close = meeting / conflict, lines apart = separation</strong>.",
+              "<strong>Three Key Elements</strong>: <ol> <li><strong>Time-scale Mapping</strong>: movie duration → SVG width, with the x-axis strictly proportional</li> <li><strong>Catmull-Rom Spline</strong>: <code>curveCatmullRom.alpha(0.5)</code> tension coefficient 0.5, “naturally flowing” but not “over-curved”</li> <li><strong>Event Layer</strong>: semi-transparent red circles + text, marking key turning points</li> </ol>",
+              "<strong>Use cases</strong>: film analysis, multi-party case timelines, sports interactions, project task handovers."
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "为什么 Catmull-Rom 不用 monotoneX？",
+            "en": "Why Catmull-Rom instead of monotoneX?"
+          },
+          {
+            "type": "p",
+            "zh": "monotoneX 保证\"不过度弯曲\"但会让线\"过于直\"，<strong>失去叙事的\"河流感\"</strong>。Catmull-Rom 张力系数 0.5 是经验值——既能流动又不震荡。",
+            "en": "monotoneX guarantees “no over-curving” but makes lines “too straight,” <strong>losing the narrative “river feel”</strong>. Catmull-Rom’s 0.5 tension is an empirical value—flows well without oscillating."
+          }
+        ],
+        "code": [
+          {
+            "type": "h3",
+            "zh": "⭐ 关键代码",
+            "en": "⭐ Key Code"
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 1：每个角色 = 一条 path</strong>",
+            "en": "⭐ <strong>Key Point 1: each character = one path</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// ⭐ 时间尺度：0-127 分钟 → 屏幕宽度\r\nconst xScale = d3.scaleLinear()\r\n  .domain([0, 127])\r\n  .range([50, width - 50]);\r\n\r\n// 每个角色是一组 [time, y] 关键点（手工调 y 实现聚散）\r\nconst characters = [\r\n  { name: 'T-REX', color: '#d32f2f', points: [\r\n    {time: 75, y: 280}, {time: 78, y: 130},   // 攻击现场\r\n    {time: 88, y: 200}, {time:120, y: 290}\r\n  ]},\r\n  { name: 'Grant', color: '#1976d2', points: [\r\n    {time:  0, y: 100}, {time: 78, y: 130},   // 与 T-REX 聚拢\r\n    {time:120, y:  50}\r\n  ]}\r\n];\r\n\r\n// 路径生成器\r\nconst line = d3.line()\r\n  .curve(d3.curveCatmullRom.alpha(0.5))   // 张力 0.5\r\n  .x(d =&gt; xScale(d.time))\r\n  .y(d =&gt; d.y);\r\n\r\ncharacters.forEach(c =&gt; {\r\n  svg.append('path')\r\n    .datum(c.points)\r\n    .attr('d', line)\r\n    .attr('stroke', c.color)\r\n    .attr('stroke-width', 3)\r\n    .attr('fill', 'none');\r\n});",
+            "text": "// ⭐ 时间尺度：0-127 分钟 → 屏幕宽度 const xScale = d3.scaleLinear() .domain([0, 127]) .range([50, width - 50]); // 每个角色是一组 [time, y] 关键点（手工调 y 实现聚散） const characters = [ { name: 'T-REX', color: '#d32f2f', points: [ {time: 75, y: 280}, {time: 78, y: 130}, // 攻击现场 {time: 88, y: 200}, {time:120, y: 290} ]}, { name: 'Grant', color: '#1976d2', points: [ {time: 0, y: 100}, {time: 78, y: 130}, // 与 T-REX 聚拢 {time:120, y: 50} ]} ]; // 路径生成器 const line = d3.line() .curve(d3.curveCatmullRom.alpha(0.5)) // 张力 0.5 .x(d =&gt; xScale(d.time)) .y(d =&gt; d.y); characters.forEach(c =&gt; { svg.append('path') .datum(c.points) .attr('d', line) .attr('stroke', c.color) .attr('stroke-width', 3) .attr('fill', 'none'); });",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ <strong>用 y 值表达\"关系\"</strong>是关键：T-REX 和 Grant 在 t=78 都画到 y=130，<strong>视觉上两条线聚拢</strong>= \"T-REX 攻击 Grant\"。这不是算法生成，是<strong>手工叙事设计</strong>——但 d3 提供工具让你能这样手工做。",
+            "en": "⭐ <strong>Using y to encode “relationships”</strong> is the key: T-REX and Grant both at y=130 at t=78, so <strong>the two lines visually converge</strong> = “T-REX attacks Grant.” This isn’t algorithmically generated—it’s <strong>manual narrative design</strong>, but d3 gives you the tools to do it by hand."
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 2：事件层（叙事锚点）</strong>",
+            "en": "⭐ <strong>Key Point 2: event layer (narrative anchors)</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// ⭐ 事件层：半透明红圈 + 文字标签\r\nconst events = [\r\n  { time: 78, x: xScale(78), y: 130, name: 'T-REX 攻击',\r\n    desc: 'T-REX 冲出围栏攻击 Alan &amp; Kids 的车' },\r\n  { time: 48, x: xScale(48), y: 320, name: 'Nedry 事件',\r\n    desc: 'Dilophosaurus 攻击 Nedry' }\r\n];\r\n\r\nconst eventLayer = svg.append('g').attr('class', 'event-layer');\r\n\r\neventLayer.selectAll('g.event')\r\n  .data(events).enter().append('g')\r\n  .attr('class', 'event')\r\n  .style('cursor', 'pointer')\r\n  .on('mouseenter', (e, d) =&gt; showTip(`${d.name}\\n${d.desc}`))\r\n  .each(function (d) {\r\n    // 半透明背景圈\r\n    d3.select(this).append('circle')\r\n      .attr('cx', d.x).attr('cy', d.y).attr('r', 20)\r\n      .attr('fill', 'rgba(255,0,0,0.15)');\r\n    // 文字\r\n    d3.select(this).append('text')\r\n      .attr('x', d.x).attr('y', d.y - 9)\r\n      .attr('text-anchor', 'middle')\r\n      .attr('font-size', 10).attr('font-weight', 600)\r\n      .attr('fill', '#cc0000')\r\n      .text(d.name);\r\n  });",
+            "text": "// ⭐ 事件层：半透明红圈 + 文字标签 const events = [ { time: 78, x: xScale(78), y: 130, name: 'T-REX 攻击', desc: 'T-REX 冲出围栏攻击 Alan &amp; Kids 的车' }, { time: 48, x: xScale(48), y: 320, name: 'Nedry 事件', desc: 'Dilophosaurus 攻击 Nedry' } ]; const eventLayer = svg.append('g').attr('class', 'event-layer'); eventLayer.selectAll('g.event') .data(events).enter().append('g') .attr('class', 'event') .style('cursor', 'pointer') .on('mouseenter', (e, d) =&gt; showTip(`${d.name}\\n${d.desc}`)) .each(function (d) { // 半透明背景圈 d3.select(this).append('circle') .attr('cx', d.x).attr('cy', d.y).attr('r', 20) .attr('fill', 'rgba(255,0,0,0.15)'); // 文字 d3.select(this).append('text') .attr('x', d.x).attr('y', d.y - 9) .attr('text-anchor', 'middle') .attr('font-size', 10).attr('font-weight', 600) .attr('fill', '#cc0000') .text(d.name); });",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ <strong>事件层与线层解耦</strong>：线层表达\"关系流动\"，事件层表达\"叙事锚点\"。这种<strong>双层结构</strong>是 Storyline 的标准设计——可分别动画、可独立筛选。",
+            "en": "⭐ <strong>Decouple event layer from line layer</strong>: the line layer expresses “relationship flow,” the event layer expresses “narrative anchors.” This <strong>two-layer structure</strong> is the standard Storyline design—each can be animated or filtered independently."
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 3：alpha(0.5) 张力系数</strong>",
+            "en": "⭐ <strong>Key Point 3: alpha(0.5) tension coefficient</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// d3.curveCatmullRom.alpha(t) - t ∈ [0, 1]\r\n// t=0: 接近 linear（接近直线）\r\n// t=0.5: 标准 Catmull-Rom（推荐）\r\n// t=1.0: 接近 cardinal（高度曲线化）\r\nd3.line().curve(d3.curveCatmullRom.alpha(0.5));",
+            "text": "// d3.curveCatmullRom.alpha(t) - t ∈ [0, 1] // t=0: 接近 linear（接近直线） // t=0.5: 标准 Catmull-Rom（推荐） // t=1.0: 接近 cardinal（高度曲线化） d3.line().curve(d3.curveCatmullRom.alpha(0.5));",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ 选 0.5 是经验值：比 0 更\"软\"（看起来有故事感），比 1.0 更\"稳\"（不会过山车）。做时间叙事就用 0.5；做科学曲线拟合就用 0.2-0.3（更接近数据）。",
+            "en": "⭐ 0.5 is an empirical value: softer than 0 (looks narrative), steadier than 1.0 (no roller-coaster). Use 0.5 for time-based narratives; use 0.2–0.3 for scientific curve fitting (closer to data)."
+          }
+        ],
+        "demo": [
+          {
+            "type": "demo",
+            "ref": "d-5-5"
+          }
+        ]
+      },
+      "unpaired": []
+    }
+  ]
+}

@@ -1,0 +1,844 @@
+{
+  "num": 3,
+  "slug": "lesson-03",
+  "title": {
+    "zh": "色彩专题",
+    "en": "Color"
+  },
+  "rawTitle": {
+    "zh": "第 3 章 色彩专题",
+    "en": "Ch 3 · Color"
+  },
+  "sections": [
+    {
+      "id": "ch-3-1",
+      "num": "3.1",
+      "slug": "3-1",
+      "title": {
+        "zh": "颜色模型基础",
+        "en": "Color Model Basics"
+      },
+      "subtitle": {
+        "zh": "为什么需要 4 种颜色空间？它们各自擅长什么？色盲眼中看到的世界是怎样的？",
+        "en": "Why do we need 4 color spaces? What is each one good at? What does the world look like through the eyes of someone with color blindness?"
+      },
+      "tabs": {
+        "explain": [
+          {
+            "type": "h3",
+            "zh": "为什么要学颜色模型？",
+            "en": "Why learn color models?"
+          },
+          {
+            "type": "p",
+            "zh": "设计 colormap 时，<strong>不能直接用 RGB 插值</strong>——因为 RGB 不是感知均匀的（255,0,0 与 0,255,0 \"看上去\"亮度差很多）。你需要感知均匀的颜色空间（Lab / HCL）来插值，才能得到平滑的渐变。",
+            "en": "When designing a colormap, <strong>do not interpolate directly in RGB</strong>—because RGB is not perceptually uniform (255,0,0 and 0,255,0 \"look\" very different in lightness). You need a perceptually uniform color space (Lab / HCL) to interpolate and get smooth gradients."
+          },
+          {
+            "type": "h3",
+            "zh": "4 大颜色空间",
+            "en": "The 4 major color spaces"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>RGB</strong>：加色模型，设备相关。屏幕显示的默认。",
+              "<strong>HSL</strong>：艺术家友好（色相/饱和度/亮度独立），但<strong>仍不感知均匀</strong>。",
+              "<strong>CIE Lab</strong>：感知均匀，<strong>设计 colormap 的黄金标准</strong>。",
+              "<strong>CMYK</strong>：减色（印刷），web 可视化用不到。"
+            ],
+            "en": [
+              "<strong>RGB</strong>: additive model, device-dependent. The default for screen display.",
+              "<strong>HSL</strong>: artist-friendly (independent hue / saturation / lightness), but <strong>still not perceptually uniform</strong>.",
+              "<strong>CIE Lab</strong>: perceptually uniform, <strong>the gold standard for designing colormaps</strong>.",
+              "<strong>CMYK</strong>: subtractive (print). Not used in web visualizations."
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "CVD（色觉缺陷）",
+            "en": "CVD (Color Vision Deficiency)"
+          },
+          {
+            "type": "p",
+            "zh": "约 8% 男性、0.5% 女性是色盲。常见三种：",
+            "en": "About 8% of men and 0.5% of women are color-blind. Three common types:"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>红色盲（protanopia）</strong>：约 1% 男性",
+              "<strong>绿色盲（deuteranopia）</strong>：约 6% 男性（最常见）",
+              "<strong>蓝色盲（tritanopia）</strong>：极罕见"
+            ],
+            "en": [
+              "<strong>Protanopia (red-blind)</strong>: ~1% of men",
+              "<strong>Deuteranopia (green-blind)</strong>: ~6% of men (most common)",
+              "<strong>Tritanopia (blue-blind)</strong>: extremely rare"
+            ]
+          }
+        ],
+        "code": [
+          {
+            "type": "h3",
+            "zh": "⭐ 关键代码",
+            "en": "⭐ Key code"
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 1：RGB → HSL 手写</strong>",
+            "en": "⭐ <strong>Key point 1: Hand-written RGB ↔ HSL</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "function rgbToHsl(r, g, b) {\r\n  r /= 255; g /= 255; b /= 255;\r\n  const max = Math.max(r, g, b), min = Math.min(r, g, b);\r\n  let h, s, l = (max + min) / 2;\r\n  if (max === min) { h = s = 0; }\r\n  else {\r\n    const d = max - min;\r\n    s = l &gt; 0.5 ? d / (2 - max - min) : d / (max + min);\r\n    switch (max) {\r\n      case r: h = (g - b) / d + (g &lt; b ? 6 : 0); break;\r\n      case g: h = (b - r) / d + 2; break;\r\n      case b: h = (r - g) / d + 4; break;\r\n    }\r\n    h /= 6;\r\n  }\r\n  return [h * 360, s * 100, l * 100];\r\n}",
+            "text": "function rgbToHsl(r, g, b) { r /= 255; g /= 255; b /= 255; const max = Math.max(r, g, b), min = Math.min(r, g, b); let h, s, l = (max + min) / 2; if (max === min) { h = s = 0; } else { const d = max - min; s = l &gt; 0.5 ? d / (2 - max - min) : d / (max + min); switch (max) { case r: h = (g - b) / d + (g &lt; b ? 6 : 0); break; case g: h = (b - r) / d + 2; break; case b: h = (r - g) / d + 4; break; } h /= 6; } return [h * 360, s * 100, l * 100]; }",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ 自己写 RGB↔HSL 是为了理解每一步的物理含义——\"最大通道决定色相、相减决定饱和度\"——比用 d3 库更能理解色相为什么在 0-360° 循环。",
+            "en": "⭐ Writing RGB↔HSL yourself is to understand the physical meaning of each step—\"the largest channel determines hue, the difference determines saturation\"—which is more illuminating than using a d3 library for understanding why hue cycles between 0–360°."
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 2：CVD 模拟矩阵</strong>",
+            "en": "⭐ <strong>Key point 2: CVD simulation matrix</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "const CVD_MATRICES = {\r\n  deuteranopia: [\r\n    [0.625, 0.375, 0.000],\r\n    [0.700, 0.300, 0.000],\r\n    [0.000, 0.300, 0.700]\r\n  ],\r\n  protanopia:   [[0.567, 0.433, 0.000], [0.558, 0.442, 0.000], [0.000, 0.242, 0.758]],\r\n  tritanopia:   [[0.950, 0.050, 0.000], [0.000, 0.433, 0.567], [0.000, 0.475, 0.525]]\r\n};\r\n\r\nfunction simulateCVD([r, g, b], type) {\r\n  const m = CVD_MATRICES[type];\r\n  return [\r\n    r * m[0][0] + g * m[0][1] + b * m[0][2],\r\n    r * m[1][0] + g * m[1][1] + b * m[1][2],\r\n    r * m[2][0] + g * m[2][1] + b * m[2][2]\r\n  ].map(v =&gt; Math.round(Math.max(0, Math.min(255, v))));\r\n}",
+            "text": "const CVD_MATRICES = { deuteranopia: [ [0.625, 0.375, 0.000], [0.700, 0.300, 0.000], [0.000, 0.300, 0.700] ], protanopia: [[0.567, 0.433, 0.000], [0.558, 0.442, 0.000], [0.000, 0.242, 0.758]], tritanopia: [[0.950, 0.050, 0.000], [0.000, 0.433, 0.567], [0.000, 0.475, 0.525]] }; function simulateCVD([r, g, b], type) { const m = CVD_MATRICES[type]; return [ r * m[0][0] + g * m[0][1] + b * m[0][2], r * m[1][0] + g * m[1][1] + b * m[1][2], r * m[2][0] + g * m[2][1] + b * m[2][2] ].map(v =&gt; Math.round(Math.max(0, Math.min(255, v)))); }",
+            "stars": []
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 3：d3 内置多空间</strong>",
+            "en": "⭐ <strong>Key point 3: d3's built-in multi-space support</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "const c = d3.color('rgb(100, 50, 200)');\r\nc.rgb();   // {r, g, b}\r\nc.hsl();   // {h, s, l}\r\nc.lab();   // {l, a, b}  ← 感知均匀\r\nc.hcl();   // {h, c, l}  ← Lab 极坐标版",
+            "text": "const c = d3.color('rgb(100, 50, 200)'); c.rgb(); // {r, g, b} c.hsl(); // {h, s, l} c.lab(); // {l, a, b} ← 感知均匀 c.hcl(); // {h, c, l} ← Lab 极坐标版",
+            "stars": []
+          }
+        ],
+        "demo": [
+          {
+            "type": "demo",
+            "ref": "d-3-1"
+          }
+        ]
+      },
+      "unpaired": []
+    },
+    {
+      "id": "ch-3-2",
+      "num": "3.2",
+      "slug": "3-2",
+      "title": {
+        "zh": "colormap 三类选择",
+        "en": "Colormap: 3 Types"
+      },
+      "subtitle": {
+        "zh": "顺序型 / 发散型 / 定性型。选错类型 = 误导读者。",
+        "en": "Sequential / Diverging / Qualitative. Choosing the wrong type = misleading your readers."
+      },
+      "tabs": {
+        "explain": [
+          {
+            "type": "h3",
+            "zh": "三类 colormap 对应不同数据语义",
+            "en": "Three colormap families match three data semantics"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>顺序型（Sequential）</strong>：数据有自然顺序（人口、温度）。单调亮度 + 单调色相。例子：<code>Viridis / Plasma / Cividis</code>",
+              "<strong>发散型（Diverging）</strong>：数据有意义的\"中点\"（如 0、正负偏差、白人中位数）。两端异色，中间白/浅。例子：<code>RdBu / BrBG / PiYG</code>",
+              "<strong>定性型（Qualitative）</strong>：数据无序（如产品类别）。色相区分、亮度接近。例子：<code>Tableau10 / Set1 / Set3</code>"
+            ],
+            "en": [
+              "<strong>Sequential</strong>: data with a natural order (population, temperature). Monotonic lightness + monotonic hue. Examples: <code>Viridis / Plasma / Cividis</code>",
+              "<strong>Diverging</strong>: data with a meaningful \"midpoint\" (e.g., zero, signed deviation, white median). Different hues at the two ends, white/light in the middle. Examples: <code>RdBu / BrBG / PiYG</code>",
+              "<strong>Qualitative</strong>: unordered data (e.g., product categories). Distinct hues, similar lightness. Examples: <code>Tableau10 / Set1 / Set3</code>"
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "典型错误",
+            "en": "Common mistakes"
+          },
+          {
+            "type": "p",
+            "zh": "用发散型 RdBu 画\"50 州谋杀率\"（有序数据）——中段接近白色，看上去\"谋杀率 = 100 附近\"的州是\"中点\"——但 100 没有任何语义，纯属误导。",
+            "en": "Using the diverging palette RdBu for \"murder rates in 50 states\" (ordinal data)—the middle band looks near-white, so states with a murder rate \"around 100\" appear to be the \"midpoint\"—but 100 has no semantic meaning, so this is purely misleading."
+          },
+          {
+            "type": "h3",
+            "zh": "CVD 友好检查清单",
+            "en": "CVD-friendly checklist"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "Viridis / Cividis：✅ 优（Nature Methods 推荐）",
+              "RdBu / BrBG：△ 中等（红绿对色盲不友好）",
+              "Tableau10（定性）：△ 与色相相关",
+              "Jet（彩虹谱）：⚠ 禁用"
+            ],
+            "en": [
+              "Viridis / Cividis: ✅ excellent (recommended by Nature Methods)",
+              "RdBu / BrBG: △ moderate (red-green pairs are not CVD-friendly)",
+              "Tableau10 (qualitative): △ hue-related issues",
+              "Jet (rainbow): ⚠ do not use"
+            ]
+          }
+        ],
+        "code": [
+          {
+            "type": "h3",
+            "zh": "⭐ 关键代码",
+            "en": "⭐ Key code"
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 1：d3 三类 scale 速记</strong>",
+            "en": "⭐ <strong>Key point 1: d3's three scale families at a glance</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// 顺序型：[0, 1] → 颜色\r\nd3.scaleSequential(d3.interpolateViridis);\r\n\r\n// 发散型：[0, 1] → 颜色（带中点反转）\r\nd3.interpolateRdBu;          // t=0 蓝，t=1 红，t=0.5 白\r\nd3.interpolateBrBG;\r\n\r\n// 定性型：离散类别 → 颜色\r\nd3.scaleOrdinal(d3.schemeTableau10);",
+            "text": "// 顺序型：[0, 1] → 颜色 d3.scaleSequential(d3.interpolateViridis); // 发散型：[0, 1] → 颜色（带中点反转） d3.interpolateRdBu; // t=0 蓝，t=1 红，t=0.5 白 d3.interpolateBrBG; // 定性型：离散类别 → 颜色 d3.scaleOrdinal(d3.schemeTableau10);",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ 选错类型 = \"撒谎\"。比如用 Viridis 表示正负偏差，用户会以为\"中点 = 白色\"——但 Viridis 的中点是深紫色。",
+            "en": "⭐ Choosing the wrong type = \"lying\". For example, using Viridis for signed deviations makes users assume \"the midpoint is white\" — but Viridis's midpoint is dark purple."
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 2：决策表</strong>",
+            "en": "⭐ <strong>Key point 2: Decision table</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "function pickColormap(data) {\r\n  if (data.hasMeaningfulMidpoint) return 'diverging';\r\n  if (data.isOrdered)              return 'sequential';\r\n  return 'categorical';\r\n}",
+            "text": "function pickColormap(data) { if (data.hasMeaningfulMidpoint) return 'diverging'; if (data.isOrdered) return 'sequential'; return 'categorical'; }",
+            "stars": []
+          }
+        ],
+        "demo": [
+          {
+            "type": "demo",
+            "ref": "d-3-2"
+          }
+        ]
+      },
+      "unpaired": []
+    },
+    {
+      "id": "ch-3-3",
+      "num": "3.3",
+      "slug": "3-3",
+      "title": {
+        "zh": "CIE Lab 色域图",
+        "en": "CIE Lab Gamut"
+      },
+      "subtitle": {
+        "zh": "在感知均匀的颜色空间里，色域长什么样？",
+        "en": "What does the gamut look like inside a perceptually uniform color space?"
+      },
+      "tabs": {
+        "explain": [
+          {
+            "type": "h3",
+            "zh": "为什么需要 Lab 色域图？",
+            "en": "Why do we need a Lab gamut diagram?"
+          },
+          {
+            "type": "p",
+            "zh": "RGB 空间是立方体，但你不知道\"哪些颜色真的存在、哪些会失真\"。CIE Lab 是感知均匀空间，<strong>距离 ≈ 人眼感知差</strong>，是设计 colormap 和检查色域的标准。",
+            "en": "RGB space is a cube, but you cannot tell \"which colors actually exist and which would be distorted\". CIE Lab is a perceptually uniform space, <strong>distance ≈ perceived difference</strong>, and is the standard for designing colormaps and checking gamut."
+          },
+          {
+            "type": "h3",
+            "zh": "三个色域（嵌套关系）",
+            "en": "Three gamuts (nested relationship)"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>sRGB</strong>：屏幕通用标准（Web/PPT/一般科研图）",
+              "<strong>Adobe RGB</strong>：摄影/印刷，绿域更广",
+              "<strong>Rec.2020</strong>：4K 电视/HDR，色域最大"
+            ],
+            "en": [
+              "<strong>sRGB</strong>: universal screen standard (Web / PPT / general scientific figures)",
+              "<strong>Adobe RGB</strong>: photography / print, wider green gamut",
+              "<strong>Rec.2020</strong>: 4K TV / HDR, the largest gamut"
+            ]
+          },
+          {
+            "type": "p",
+            "zh": "超出 sRGB 的颜色（如高饱和度的纯绿）在普通屏幕上<strong>显示不出来</strong>，会被 clamp。",
+            "en": "Colors outside sRGB (e.g., highly saturated pure green) <strong>cannot be displayed</strong> on ordinary screens and get clamped."
+          },
+          {
+            "type": "h3",
+            "zh": "实战用法",
+            "en": "Practical usage"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "从 <code>d3.lab(L, a, b).rgb()</code> 转换时，超出 sRGB 的颜色会自动 clamp",
+              "设计 colormap 时用 <code>d3.interpolateLab</code>（在 Lab 空间插值），比 <code>d3.interpolateRgb</code> 平滑得多",
+              "高饱和度色仅在打印/4K 屏幕上\"存在\"，Web 上看不一定准确"
+            ],
+            "en": [
+              "When converting from <code>d3.lab(L, a, b).rgb()</code>, colors outside sRGB are clamped automatically",
+              "When designing colormaps, use <code>d3.interpolateLab</code> (interpolates in Lab space), which is far smoother than <code>d3.interpolateRgb</code>",
+              "Highly saturated colors only \"exist\" on print / 4K screens, and may not look accurate on the Web"
+            ]
+          }
+        ],
+        "code": [
+          {
+            "type": "h3",
+            "zh": "⭐ 关键代码",
+            "en": "⭐ Key code"
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 1：Lab 颜色对象</strong>",
+            "en": "⭐ <strong>Key point 1: Lab color object</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// 直接构造 Lab 颜色\r\nconst c = d3.lab(50, 30, -20);    // L*=50, a*=30, b*=-20\r\nconsole.log(c.rgb());              // → RGB {r, g, b}（clamp 到 sRGB）\r\nconsole.log(c.formatHex());       // → \"#xxxxxx\"\r\n\r\n// 从 RGB 反向构造\r\nconst c2 = d3.color('#ff0080');\r\nconsole.log(c2.lab());             // → {l, a, b}",
+            "text": "// 直接构造 Lab 颜色 const c = d3.lab(50, 30, -20); // L*=50, a*=30, b*=-20 console.log(c.rgb()); // → RGB {r, g, b}（clamp 到 sRGB） console.log(c.formatHex()); // → \"#xxxxxx\" // 从 RGB 反向构造 const c2 = d3.color('#ff0080'); console.log(c2.lab()); // → {l, a, b}",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ d3.lab() 返回的是 Lab 颜色对象，但显示时还是转回 RGB。Lab 是\"思考空间\"，RGB 是\"显示空间\"。",
+            "en": "⭐ d3.lab() returns a Lab color object, but when displaying you still convert back to RGB. Lab is the \"thinking space\", RGB is the \"display space\"."
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 2：在 Lab 空间插值</strong>",
+            "en": "⭐ <strong>Key point 2: Interpolate in Lab space</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// 在 Lab 空间插值（感知均匀）\r\nconst interp = d3.interpolateLab('#000000', '#ffffff');\r\ninterp(0.5);   // → 中间灰（Lab 空间线性插值，结果感知均匀）\r\n\r\n// vs 在 RGB 空间插值（不均匀）\r\nconst interpRgb = d3.interpolateRgb('#000000', '#ffffff');\r\ninterpRgb(0.5);  // → 中间灰（RGB 空间插值，但在 Lab 看来\"不是中间\"）",
+            "text": "// 在 Lab 空间插值（感知均匀） const interp = d3.interpolateLab('#000000', '#ffffff'); interp(0.5); // → 中间灰（Lab 空间线性插值，结果感知均匀） // vs 在 RGB 空间插值（不均匀） const interpRgb = d3.interpolateRgb('#000000', '#ffffff'); interpRgb(0.5); // → 中间灰（RGB 空间插值，但在 Lab 看来\"不是中间\"）",
+            "stars": []
+          }
+        ],
+        "demo": [
+          {
+            "type": "demo",
+            "ref": "d-3-3"
+          }
+        ]
+      },
+      "unpaired": []
+    },
+    {
+      "id": "ch-3-4",
+      "num": "3.4",
+      "slug": "3-4",
+      "title": {
+        "zh": "色系搭配规则（5 大类）",
+        "en": "Color Harmony Rules (5 Types)"
+      },
+      "subtitle": {
+        "zh": "单色 / 类比 / 互补 / 三等分 / 分裂互补——什么时候用哪个？",
+        "en": "Monochromatic / Analogous / Complementary / Triadic / Split-Complementary—when do you use each?"
+      },
+      "tabs": {
+        "explain": [
+          {
+            "type": "h3",
+            "zh": "5 大色系规则",
+            "en": "The 5 major color scheme rules"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>单色 Monochromatic</strong>：同一色相不同亮度/饱和。安全、低风险。",
+              "<strong>类比 Analogous</strong>：色轮相邻 ±30°。和谐但缺少对比度。",
+              "<strong>互补 Complementary</strong>：色轮正对面 180°。对比度强但易刺眼。",
+              "<strong>三等分 Triadic</strong>：色轮 120° 等分。3 种类别时最常用。",
+              "<strong>分裂互补 Split</strong>：互补色相邻 150°。温和版互补。"
+            ],
+            "en": [
+              "<strong>Monochromatic</strong>: the same hue with varying lightness / saturation. Safe and low risk.",
+              "<strong>Analogous</strong>: adjacent on the color wheel, within ±30°. Harmonious but lacking contrast.",
+              "<strong>Complementary</strong>: directly opposite on the color wheel at 180°. Strong contrast but can be jarring.",
+              "<strong>Triadic</strong>: evenly spaced at 120° on the color wheel. The most common choice for 3 categories.",
+              "<strong>Split-Complementary</strong>: adjacent to the complement at 150°. A softer version of complementary."
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "选择原则",
+            "en": "Selection principles"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>严肃科研</strong>：单色（Nature 黑白经济型配色）",
+              "<strong>层级 / 分组</strong>：类比",
+              "<strong>突出重点</strong>：互补（实验组 vs 对照组）",
+              "<strong>3 种类别</strong>：三等分",
+              "<strong>一般情况</strong>：分裂互补（不刺眼又有对比）"
+            ],
+            "en": [
+              "<strong>Serious scientific work</strong>: monochromatic (Nature-style black-and-white economical palette)",
+              "<strong>Hierarchy / grouping</strong>: analogous",
+              "<strong>Highlight a focal point</strong>: complementary (treatment vs control)",
+              "<strong>3 categories</strong>: triadic",
+              "<strong>General cases</strong>: split-complementary (not jarring, but still has contrast)"
+            ]
+          }
+        ],
+        "code": [
+          {
+            "type": "h3",
+            "zh": "⭐ 关键代码",
+            "en": "⭐ Key code"
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 1：HSL 色相差</strong>",
+            "en": "⭐ <strong>Key point 1: HSL hue difference</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// 5 大色系的\"色相差\"参数\r\nconst HUE_OFFSETS = {\r\n  monochromatic: 0,     // 同色相\r\n  analogous:     30,    // ±30°\r\n  complementary: 180,   // 180° 对面\r\n  triadic:       120,   // 120° 三等分\r\n  split:         150    // 150° 邻补\r\n};\r\n\r\n// 生成 5 色调色板\r\nfunction palette(baseH, offset) {\r\n  return [-2, -1, 0, 1, 2].map(i =&gt; {\r\n    const h = (baseH + i * offset + 360) % 360;\r\n    return d3.hsl(h, 0.6, 0.55).formatHex();\r\n  });\r\n}",
+            "text": "// 5 大色系的\"色相差\"参数 const HUE_OFFSETS = { monochromatic: 0, // 同色相 analogous: 30, // ±30° complementary: 180, // 180° 对面 triadic: 120, // 120° 三等分 split: 150 // 150° 邻补 }; // 生成 5 色调色板 function palette(baseH, offset) { return [-2, -1, 0, 1, 2].map(i =&gt; { const h = (baseH + i * offset + 360) % 360; return d3.hsl(h, 0.6, 0.55).formatHex(); }); }",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ <code>d3.hsl(h, s, l)</code> 直接构造 HSL 颜色对象。HSL 中 H 是 0-360° 循环，相加要 mod 360。",
+            "en": "⭐ <code>d3.hsl(h, s, l)</code> directly constructs an HSL color object. In HSL, H cycles through 0–360°, so additions must be mod 360."
+          }
+        ],
+        "demo": [
+          {
+            "type": "demo",
+            "ref": "d-3-4"
+          }
+        ]
+      },
+      "unpaired": []
+    },
+    {
+      "id": "ch-3-5",
+      "num": "3.5",
+      "slug": "3-5",
+      "title": {
+        "zh": "科研经典配色",
+        "en": "Classic Research Palettes"
+      },
+      "subtitle": {
+        "zh": "Wong / Paul Tol / Okabe-Ito / Tableau / Paired / Viridis——顶标都在用什么？",
+        "en": "Wong / Paul Tol / Okabe-Ito / Tableau / Paired / Viridis—what are top journals using?"
+      },
+      "tabs": {
+        "explain": [
+          {
+            "type": "h3",
+            "zh": "3 大黄金标准",
+            "en": "The 3 gold standards"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>Wong 2011</strong>：Nature Methods 8:441 推荐，8 色 CVD 友好，灰度打印友好",
+              "<strong>Paul Tol</strong>：SRON Tech Note，bright（白底）/ muted（深底）/ high-contrast（对比",
+              "<strong>Okabe-Ito 2002</strong>：8 色，CVD 友好，早期 Nature/Science 默认"
+            ],
+            "en": [
+              "<strong>Wong 2011</strong>: recommended in Nature Methods 8:441, 8-color, CVD-friendly and grayscale-print-friendly",
+              "<strong>Paul Tol</strong>: SRON Tech Note, bright (on white background) / muted (on dark background) / high-contrast",
+              "<strong>Okabe-Ito 2002</strong>: 8 colors, CVD-friendly, the default in early Nature/Science"
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "商业 / 通用",
+            "en": "Commercial / general purpose"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>Tableau 10</strong>：商业图表之王，10 色，红绿对色盲不友好",
+              "<strong>Paired (12)</strong>：配对设计（处理前/后），12 色过载"
+            ],
+            "en": [
+              "<strong>Tableau 10</strong>: the king of commercial charts, 10 colors, red-green pairs are not CVD-friendly",
+              "<strong>Paired (12)</strong>: paired designs (pre/post), 12 colors are too many"
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "顺序型 / 发散型",
+            "en": "Sequential / Diverging"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>Viridis</strong>：matplotlib/d3 默认，感知均匀 + CVD 友好",
+              "<strong>Cividid</strong>：Viridis 的 CVD 强化版（更蓝/黄分明）",
+              "<strong>RdBu</strong>：发散型红蓝"
+            ],
+            "en": [
+              "<strong>Viridis</strong>: default in matplotlib / d3, perceptually uniform + CVD-friendly",
+              "<strong>Cividis</strong>: a CVD-reinforced version of Viridis (more distinct blue/yellow)",
+              "<strong>RdBu</strong>: diverging red-blue"
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "实战原则",
+            "en": "Practical principles"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "类别数 ≤ 7，类别多时改用连续 colormap",
+              "必须经过 CVD 模拟测试",
+              "优先使用 CVD 友好 + 灰度友好的（顶标都用这套）"
+            ],
+            "en": [
+              "If the number of categories ≤ 7; for more categories, switch to a continuous colormap",
+              "Must pass CVD simulation testing",
+              "Prefer CVD-friendly + grayscale-friendly palettes (this is what top journals use)"
+            ]
+          }
+        ],
+        "code": [
+          {
+            "type": "h3",
+            "zh": "⭐ 关键代码",
+            "en": "⭐ Key code"
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 1：经典配色硬编码数组</strong>",
+            "en": "⭐ <strong>Key point 1: Hard-coding classic palettes as arrays</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "const CLASSIC_PALETTES = {\r\n  'Wong 2011':       ['#000000', '#E69F00', '#56B4E9', '#009E73', '#F0E442', '#0072B2', '#D55E00', '#CC79A7'],\r\n  'Paul Tol bright': ['#4477AA', '#EE6677', '#228833', '#CCBB44', '#66CCEE', '#AA3377', '#BBBBBB'],\r\n  'Okabe-Ito':       ['#000000', '#E69F00', '#56B4E9', '#009E73', '#F0E442', '#0072B2', '#D55E00', '#CC79A7'],\r\n  'Tableau 10':      ['#4E79A7', '#F28E2B', '#E15759', '#76B7B2', '#59A14F', '#EDC948', '#B07AA1', '#FF9DA7', '#9C755F', '#BAB0AC'],\r\n  'Viridis (seq)':   d3.range(0, 1.01, 0.1).map(d3.interpolateViridis),\r\n  'RdBu (div)':      d3.range(0, 1.01, 0.1).map(t =&gt; d3.interpolateRdBu(1 - t))\r\n};",
+            "text": "const CLASSIC_PALETTES = { 'Wong 2011': ['#000000', '#E69F00', '#56B4E9', '#009E73', '#F0E442', '#0072B2', '#D55E00', '#CC79A7'], 'Paul Tol bright': ['#4477AA', '#EE6677', '#228833', '#CCBB44', '#66CCEE', '#AA3377', '#BBBBBB'], 'Okabe-Ito': ['#000000', '#E69F00', '#56B4E9', '#009E73', '#F0E442', '#0072B2', '#D55E00', '#CC79A7'], 'Tableau 10': ['#4E79A7', '#F28E2B', '#E15759', '#76B7B2', '#59A14F', '#EDC948', '#B07AA1', '#FF9DA7', '#9C755F', '#BAB0AC'], 'Viridis (seq)': d3.range(0, 1.01, 0.1).map(d3.interpolateViridis), 'RdBu (div)': d3.range(0, 1.01, 0.1).map(t =&gt; d3.interpolateRdBu(1 - t)) };",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ 直接用 hex 数组硬编码比用 d3 内置 scheme 更稳——因为 scheme 名字在不同 d3 版本会变。",
+            "en": "⭐ Hard-coding as hex arrays is more stable than using d3's built-in schemes—because scheme names change across d3 versions."
+          }
+        ],
+        "demo": [
+          {
+            "type": "demo",
+            "ref": "d-3-5"
+          }
+        ]
+      },
+      "unpaired": []
+    },
+    {
+      "id": "ch-3-6",
+      "num": "3.6",
+      "slug": "3-6",
+      "title": {
+        "zh": "对错案例对比",
+        "en": "Right vs Wrong Comparison"
+      },
+      "subtitle": {
+        "zh": "4 张图，3 错 1 对。点击你认为\"对\"的那张。",
+        "en": "4 figures, 3 wrong and 1 right. Click the one you think is \"correct\"."
+      },
+      "tabs": {
+        "explain": [
+          {
+            "type": "h3",
+            "zh": "4 个典型错误",
+            "en": "4 typical mistakes"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>⚠ 彩虹谱 Jet</strong>：非感知均匀 + CVD 不友好 + 打印不友好。Nature 已禁用。",
+              "<strong>⚠ 红绿对比</strong>：红绿色盲眼中几乎变成同色（最严重的可访问性问题）",
+              "<strong>⚠ 颜色过多 12 色</strong>：超过 7 种时眼睛无法区分",
+              "<strong>✅ Wong 8 色</strong>：CVD 友好 + 灰度打印友好 + 类别数 ≤ 8"
+            ],
+            "en": [
+              "<strong>⚠ Rainbow palette Jet</strong>: not perceptually uniform + not CVD-friendly + not print-friendly. Nature has banned it.",
+              "<strong>⚠ Red-green contrast</strong>: to a red-green colorblind viewer, they almost become the same color (the most serious accessibility issue)",
+              "<strong>⚠ Too many colors (12)</strong>: the eye cannot distinguish beyond 7",
+              "<strong>✅ Wong 8-color</strong>: CVD-friendly + grayscale-print-friendly + ≤ 8 categories"
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "教学要点",
+            "en": "Teaching takeaways"
+          },
+          {
+            "type": "p",
+            "zh": "让学生亲手投票，能加深对\"为什么是错的\"的理解——光看理论不如下场选错一次来得深。",
+            "en": "Letting students vote by hand deepens their understanding of \"why it is wrong\"—just reading theory is not as powerful as making the wrong choice in person."
+          }
+        ],
+        "code": [
+          {
+            "type": "h3",
+            "zh": "⭐ 关键代码",
+            "en": "⭐ Key code"
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 1：构建可点击的 quiz 卡片</strong>",
+            "en": "⭐ <strong>Key point 1: Build clickable quiz cards</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "// 4 张 SVG 卡片，点哪张就高亮 + 显示原因\r\ncases.forEach((c, i) =&gt; {\r\n  const card = document.createElement('div');\r\n  card.className = 'quiz-card';\r\n  card.innerHTML = `${makeSampleBars(c.palette)}&lt;div&gt;${c.name}&lt;/div&gt;`;\r\n  card.addEventListener('click', () =&gt; {\r\n    cards.forEach((cc, ii) =&gt; {\r\n      cc.classList.remove('correct', 'wrong');\r\n      if (ii === i) cc.classList.add(c.type);  // 'correct' or 'wrong'\r\n    });\r\n    showResult(c);\r\n  });\r\n  grid.appendChild(card);\r\n});",
+            "text": "// 4 张 SVG 卡片，点哪张就高亮 + 显示原因 cases.forEach((c, i) =&gt; { const card = document.createElement('div'); card.className = 'quiz-card'; card.innerHTML = `${makeSampleBars(c.palette)}&lt;div&gt;${c.name}&lt;/div&gt;`; card.addEventListener('click', () =&gt; { cards.forEach((cc, ii) =&gt; { cc.classList.remove('correct', 'wrong'); if (ii === i) cc.classList.add(c.type); // 'correct' or 'wrong' }); showResult(c); }); grid.appendChild(card); });",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ quiz 模式比\"展示正确\"更适合教学——让学生先犯错再揭示答案。",
+            "en": "⭐ Quiz mode is more pedagogical than \"showing the right answer\"—let students make the mistake first, then reveal the answer."
+          }
+        ],
+        "demo": [
+          {
+            "type": "demo",
+            "ref": "d-3-6"
+          }
+        ]
+      },
+      "unpaired": []
+    },
+    {
+      "id": "ch-3-7",
+      "num": "3.7",
+      "slug": "3-7",
+      "title": {
+        "zh": "鲜艳 + 低饱和 哲学生成器",
+        "en": "Vivid + Low-Sat Palette Generator"
+      },
+      "subtitle": {
+        "zh": "颜色数量 ≤ 7、鲜艳颜色 + 低饱和度 = 好看又耐看。算法自动生成 5-7 色搭配。",
+        "en": "Color count ≤ 7, vivid colors + low saturation = beautiful and easy on the eye. The algorithm automatically generates 5–7 color combinations."
+      },
+      "tabs": {
+        "explain": [
+          {
+            "type": "h3",
+            "zh": "你的配色哲学（落地到 3 条规则）",
+            "en": "Your color philosophy (distilled into 3 rules)"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>颜色数量 ≤ 7</strong>：超过 7 种眼睛就分不清",
+              "<strong>鲜艳颜色</strong>（高 H 区分度）：用 H 拉开类间距离（≥30°）",
+              "<strong>低饱和度</strong>（S 30-50%）：每个色都别太\"冲\"，耐看"
+            ],
+            "en": [
+              "<strong>Color count ≤ 7</strong>: beyond 7 the eye cannot tell them apart",
+              "<strong>Vivid colors</strong> (high H differentiation): use H to separate categories (≥ 30°)",
+              "<strong>Low saturation</strong> (S 30–50%): each color should not be too aggressive—easy on the eyes"
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "经验公式",
+            "en": "Empirical formulas"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "主色 S = 70-80%（鲜明但不刺眼）",
+              "配套色 S = 30-50%（低饱和，耐看）",
+              "强调色用互补或类比，<strong>不要全饱和</strong>",
+              "高亮用 L=85-90%（如背景、注释）"
+            ],
+            "en": [
+              "Primary color S = 70–80% (vivid but not harsh)",
+              "Supporting color S = 30–50% (low saturation, easy on the eyes)",
+              "For accent colors, use complementary or analogous, <strong>avoid full saturation</strong>",
+              "Highlights use L = 85–90% (e.g., for backgrounds, notes)"
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "7 色生成规则",
+            "en": "The 7-color generation rule"
+          },
+          {
+            "type": "p",
+            "zh": "主色 + 2 类比（±30°）+ 1 类比低饱和 + 1 互补 + 1 互补低饱和 + 1 高亮 = 7 色，符合\"≤ 7\"原则。",
+            "en": "Primary + 2 analogous (±30°) + 1 analogous low-saturation + 1 complementary + 1 complementary low-saturation + 1 highlight = 7 colors, conforming to the \"≤ 7\" principle."
+          }
+        ],
+        "code": [
+          {
+            "type": "h3",
+            "zh": "⭐ 关键代码",
+            "en": "⭐ Key code"
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 1：7 色生成规则</strong>",
+            "en": "⭐ <strong>Key point 1: 7-color generation rule</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "function genPalette(H, S, L) {\r\n  return [\r\n    hslHex((H - 30 + 360) % 360, S * 0.6, L * 1.1),  // 类比 1 低饱和\r\n    hslHex((H - 30 + 360) % 360, S, L),              // 类比 1\r\n    hslHex(H, S, L),                                 // 主色\r\n    hslHex((H + 30) % 360, S, L),                    // 类比 2\r\n    hslHex((H + 30) % 360, S * 0.6, L * 1.1),        // 类比 2 低饱和\r\n    hslHex((H + 180) % 360, S * 0.8, L * 0.95),      // 互补\r\n    hslHex(H, S * 0.2, L * 1.4)                      // 高亮（极低饱和）\r\n  ];\r\n}",
+            "text": "function genPalette(H, S, L) { return [ hslHex((H - 30 + 360) % 360, S * 0.6, L * 1.1), // 类比 1 低饱和 hslHex((H - 30 + 360) % 360, S, L), // 类比 1 hslHex(H, S, L), // 主色 hslHex((H + 30) % 360, S, L), // 类比 2 hslHex((H + 30) % 360, S * 0.6, L * 1.1), // 类比 2 低饱和 hslHex((H + 180) % 360, S * 0.8, L * 0.95), // 互补 hslHex(H, S * 0.2, L * 1.4) // 高亮（极低饱和） ]; }",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ <code>(H + offset + 360) % 360</code> 是 HSL 色相循环的安全写法——避免负数或 &gt; 360。",
+            "en": "⭐ <code>(H + offset + 360) % 360</code> is the safe way to cycle HSL hues—avoiding negatives or values &gt; 360."
+          }
+        ],
+        "demo": [
+          {
+            "type": "demo",
+            "ref": "d-3-7"
+          }
+        ]
+      },
+      "unpaired": []
+    },
+    {
+      "id": "ch-3-8",
+      "num": "3.8",
+      "slug": "3-8",
+      "title": {
+        "zh": "CVD 论文图测",
+        "en": "CVD Paper Figure Test"
+      },
+      "subtitle": {
+        "zh": "你的图在色盲眼里还看得懂吗？拿真实顶标图做测试。",
+        "en": "Can your figure still be understood by someone with CVD? Test it with real top-journal figures."
+      },
+      "tabs": {
+        "explain": [
+          {
+            "type": "h3",
+            "zh": "3 个\"经典论文图\"案例",
+            "en": "3 \"classic paper figure\" cases"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "<strong>图 1：5 类别散点（Wong 配色）</strong>——Nature 风格",
+              "<strong>图 2：顺序型热图（Viridis）</strong>——最常见的科研图",
+              "<strong>图 3：红绿对比（错误案例）</strong>——常见但严重"
+            ],
+            "en": [
+              "<strong>Figure 1: 5-category scatter (Wong palette)</strong>—Nature style",
+              "<strong>Figure 2: Sequential heatmap (Viridis)</strong>—the most common scientific figure",
+              "<strong>Figure 3: Red-green contrast (mistake case)</strong>—common but serious"
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "CVD 测试流程",
+            "en": "CVD testing workflow"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "把图导出 PNG",
+              "用 <a href=\"https://www.color-blindness.com/coblis-color-blindness-simulator/\" target=\"_blank\">Coblis</a> 或 <a href=\"https://colororacle.org/\" target=\"_blank\">Color Oracle</a> 模拟",
+              "看是否仍能区分（亮度对比 / 形状 / 标签）"
+            ],
+            "en": [
+              "Export the figure as PNG",
+              "Simulate with <a href=\"https://www.color-blindness.com/coblis-color-blindness-simulator/\" target=\"_blank\">Coblis</a> or <a href=\"https://colororacle.org/\" target=\"_blank\">Color Oracle</a>",
+              "Check whether elements can still be distinguished (lightness contrast / shape / labels)"
+            ]
+          },
+          {
+            "type": "h3",
+            "zh": "实测结论",
+            "en": "Test results"
+          },
+          {
+            "type": "list",
+            "zh": [
+              "Wong / Okabe-Ito / Paul Tol：✅ 在 3 种 CVD 下都能区分",
+              "红绿对比：⚠ 在绿盲眼中几乎同色（最严重）",
+              "Nature/Science/Cell 已逐步迁移到 CVD 友好配色"
+            ],
+            "en": [
+              "Wong / Okabe-Ito / Paul Tol: ✅ distinguishable under all 3 types of CVD",
+              "Red-green contrast: ⚠ almost the same color to green-blind viewers (most severe)",
+              "Nature / Science / Cell have been gradually migrating to CVD-friendly palettes"
+            ]
+          }
+        ],
+        "code": [
+          {
+            "type": "h3",
+            "zh": "⭐ 关键代码",
+            "en": "⭐ Key code"
+          },
+          {
+            "type": "p",
+            "zh": "⭐ <strong>关键点 1：把 SVG 中所有 fill 做 CVD 模拟</strong>",
+            "en": "⭐ <strong>Key point 1: Apply CVD simulation to every fill in an SVG</strong>"
+          },
+          {
+            "type": "code",
+            "lang": "js",
+            "html": "function cvdTransformSvg(svgString, type) {\r\n  const doc = new DOMParser().parseFromString(svgString, 'image/svg+xml');\r\n  doc.querySelectorAll('[fill]').forEach(el =&gt; {\r\n    const c = d3.color(el.getAttribute('fill'));\r\n    if (!c) return;\r\n    const rgb = [Math.round(c.rgb().r), Math.round(c.rgb().g), Math.round(c.rgb().b)];\r\n    const sim = simulateCVD(rgb, type);\r\n    el.setAttribute('fill', `rgb(${sim.join(',')})`);\r\n  });\r\n  return new XMLSerializer().serializeToString(doc);\r\n}",
+            "text": "function cvdTransformSvg(svgString, type) { const doc = new DOMParser().parseFromString(svgString, 'image/svg+xml'); doc.querySelectorAll('[fill]').forEach(el =&gt; { const c = d3.color(el.getAttribute('fill')); if (!c) return; const rgb = [Math.round(c.rgb().r), Math.round(c.rgb().g), Math.round(c.rgb().b)]; const sim = simulateCVD(rgb, type); el.setAttribute('fill', `rgb(${sim.join(',')})`); }); return new XMLSerializer().serializeToString(doc); }",
+            "stars": []
+          },
+          {
+            "type": "keypoint",
+            "zh": "⭐ 用 <code>DOMParser</code> 解析 SVG 字符串，遍历所有 <code>fill</code> 属性应用 CVD 矩阵。比手写 SVG 字符串拼接安全。",
+            "en": "⭐ Use <code>DOMParser</code> to parse SVG strings, then walk all <code>fill</code> attributes and apply the CVD matrix. Safer than hand-concatenating SVG strings."
+          }
+        ],
+        "demo": [
+          {
+            "type": "demo",
+            "ref": "d-3-8"
+          }
+        ]
+      },
+      "unpaired": []
+    }
+  ]
+}

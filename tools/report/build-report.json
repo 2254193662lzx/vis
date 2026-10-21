@@ -1,0 +1,40 @@
+{
+  "pages": 16,
+  "files": 49,
+  "totalBytes": 1528149,
+  "cssBytes": 70034,
+  "biggest": [
+    {
+      "file": "assets/vendor/d3.min.js",
+      "kb": 273.2
+    },
+    {
+      "file": "img/01-mackinlay-ranking.webp",
+      "kb": 76.3
+    },
+    {
+      "file": "assets/site.css",
+      "kb": 68.4
+    },
+    {
+      "file": "en/lesson-05/index.html",
+      "kb": 58.6
+    },
+    {
+      "file": "lesson-05/index.html",
+      "kb": 57.3
+    },
+    {
+      "file": "en/lesson-03/index.html",
+      "kb": 56.9
+    },
+    {
+      "file": "en/lesson-02/index.html",
+      "kb": 55.6
+    },
+    {
+      "file": "lesson-03/index.html",
+      "kb": 55.4
+    }
+  ]
+}

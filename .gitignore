@@ -1,0 +1,13 @@
+# 构建期依赖（产物零依赖，dist/ 才是要发布的东西）
+node_modules/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# 说明：以下目录是有意提交的，不要忽略
+#   legacy/   旧站只读副本 —— 迁移输入，让重建过程完全可复现
+#   content/  内容层（构建输入）
+#   dist/     构建产物（部署用）

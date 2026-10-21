@@ -1,0 +1,170 @@
+/* ============================================================
+ * tokens.css —— 设计令牌（全站唯一色彩/字体/间距/动效来源）
+ *
+ * 方向：星图（Celestial Atlas）。
+ * 这门课本就是一份知识地图，所以视觉隐喻取「星图」——每章是一组星座，
+ * 知识地图的球体就是天球，主页是一片会转的银河。
+ *
+ * 配色：曜石黑底 + 香槟金主色 + 灰玉次色。
+ * 刻意避开两种最容易撞车的搭配：不用深蓝底（上一版就是，用户否掉了），
+ * 也不用「暖奶油底 + 赤陶色」那一套。亮色主题取冷调纸白（偏灰玉，不是奶油）。
+ *
+ * 全站不出现紫色。五章配色是五颗星的颜色，同族而降噪：香槟 → 灰玉 → 玫瑰石英 → 岩板 → 沙。
+ * ============================================================ */
+
+:root {
+  /* ---------- 暗色（默认：夜空） ---------- */
+  --bg: #08090d;                 /* 曜石黑，几乎中性，只有一丝冷调 */
+  --bg-deep: #04050a;
+  --surface: #101218;
+  --surface-2: #171a21;
+  --surface-3: #1f232c;
+  --text: #edeff3;
+  --text-2: #a6adba;
+  --text-3: #808896;
+  --border: rgba(226, 232, 240, 0.12);
+  --border-strong: rgba(226, 232, 240, 0.24);
+
+  --accent: #e3cd92;             /* 香槟金：星光那一族的暖色 */
+  --accent-ink: #efdfae;
+  --accent-soft: rgba(227, 205, 146, 0.14);
+  --accent-2: #8fae9f;           /* 灰玉：次色，用于次要信息与对照 */
+  --accent-3: #bfa066;
+  --badge-bg: var(--accent);      /* 编号徽标的底 */
+  --badge-ink: #191307;           /* 压在徽标上的字 */
+  --ok: #8fae9f;
+  --warn: #d8b878;
+  --err: #d99a8a;
+
+  --grad-hot: linear-gradient(112deg, #e3cd92 0%, #bfa066 55%, #8fae9f 100%);
+  --grad-soft: linear-gradient(160deg, rgba(227, 205, 146, 0.10), rgba(143, 174, 159, 0.07));
+
+  /* 代码着色：夜空底色 + 香槟关键字 */
+  --code-bg: rgba(6, 7, 12, 0.78);
+  --code-bg-2: rgba(14, 16, 23, 0.9);
+  --code-text: #e6e9ef;
+  --code-cmt: #767d8c;
+  --code-str: #b9cfa6;
+  --code-kw: #e6d5a2;
+  --code-num: #d8b878;
+  --code-fn: #9fc2c0;
+  --code-op: #b4bac6;
+  --code-star: #e3cd92;
+  --code-line: rgba(227, 205, 146, 0.13);
+
+  /* ---------- 毛玻璃 ---------- */
+  --glass-bg: rgba(255, 255, 255, 0.055);
+  --glass-bg-strong: rgba(255, 255, 255, 0.11);
+  --glass-border: rgba(255, 255, 255, 0.13);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  --glass-blur: 14px;
+  --glass-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 14px 44px rgba(0, 0, 0, 0.46);
+
+  /* ---------- 银河 ---------- */
+  --sky-1: #04050a;
+  --sky-2: #08090d;
+  --sky-3: #10121a;
+  --sky-band: rgba(227, 205, 146, 0.11);   /* 银河带的暖光 */
+  --sky-band-2: rgba(143, 174, 159, 0.09); /* 银河带的冷光 */
+
+  /* ---------- 字体 ---------- */
+  --font-latin: "Inter", "Segoe UI Variable Text", "Segoe UI", -apple-system,
+    BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --font: var(--font-latin);
+  /* 拉丁用高对比衬线（显示级），中文回落到雅黑 Light / 苹方 */
+  --font-display: "Instrument Serif", "Microsoft YaHei UI Light", "Microsoft YaHei Light",
+    "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", Georgia, serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", ui-monospace, Menlo, Consolas, monospace;
+
+  --fs-scale: 1;
+  --fs-body: calc(16.5px * var(--fs-scale));
+  --fs-sm: calc(14px * var(--fs-scale));
+  --fs-xs: calc(12.5px * var(--fs-scale));
+  --lh-body: 1.82;
+  --read-w: 860px;
+
+  /* 大字号中文用细字重（雅黑 Light）比 700+ 更挺括，也不会糊成一团 */
+  --display-weight: 350;
+
+  /* ---------- 间距与形状 ---------- */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px;  --sp-4: 16px;
+  --sp-5: 24px; --sp-6: 32px; --sp-7: 48px;  --sp-8: 72px;
+  --radius: 20px;
+  --radius-sm: 13px;
+  --radius-xs: 9px;
+  --sidebar-w: 278px;
+  --rail-w: 252px;
+  --topbar-h: 62px;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.3);
+  --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.38), 0 18px 50px rgba(0, 0, 0, 0.48);
+  --shadow-pop: 0 30px 90px rgba(0, 0, 0, 0.62);
+
+  /* ---------- 动效 ---------- */
+  --dur-fast: 0.18s;
+  --dur: 0.34s;
+  --dur-slow: 0.7s;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --reveal-shift: 16px;
+}
+
+/* ---------- 亮色（冷调纸白，偏灰玉；刻意不用暖奶油） ---------- */
+:root[data-theme="light"] {
+  --bg: #eff1f0;
+  --bg-deep: #e0e4e2;
+  --surface: #ffffff;
+  --surface-2: #f5f7f6;
+  --surface-3: #e8ebe9;
+  --text: #0c0f12;
+  --text-2: #414a52;
+  --text-3: #5f6a73;
+  --border: rgba(12, 15, 18, 0.12);
+  --border-strong: rgba(12, 15, 18, 0.24);
+
+  --accent: #a8873c;
+  --accent-ink: #7d6428;
+  --accent-soft: rgba(168, 135, 60, 0.16);
+  --accent-2: #4f7568;
+  --accent-3: #8a6f33;
+  --badge-bg: #7d6428;
+  --badge-ink: #ffffff;
+
+  --grad-hot: linear-gradient(112deg, #a8873c 0%, #8a6f33 52%, #4f7568 100%);
+  --grad-soft: linear-gradient(160deg, rgba(168, 135, 60, 0.12), rgba(79, 117, 104, 0.08));
+
+  --code-bg: #14171c;
+  --code-bg-2: #1c2027;
+  --code-text: #e8ebf0;
+  --code-cmt: #8a919e;
+  --code-str: #bdd2a8;
+  --code-kw: #e8d8a6;
+  --code-num: #dcbe80;
+  --code-fn: #a6c8c5;
+  --code-star: #e3cd92;
+  --code-line: rgba(255, 255, 255, 0.09);
+
+  /* 亮色的玻璃：白面 + 深色发丝边（白底上用白边等于没有轮廓） */
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-bg-strong: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(12, 15, 18, 0.12);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --glass-shadow: 0 1px 2px rgba(12, 15, 18, 0.08), 0 14px 44px rgba(12, 15, 18, 0.14);
+
+  --sky-1: #dfe4e2;
+  --sky-2: #eff1f0;
+  --sky-3: #cdd5d2;
+  --sky-band: rgba(168, 135, 60, 0.1);
+  --sky-band-2: rgba(79, 117, 104, 0.08);
+
+  --shadow-1: 0 1px 2px rgba(12, 15, 18, 0.06), 0 6px 20px rgba(12, 15, 18, 0.09);
+  --shadow-2: 0 2px 8px rgba(12, 15, 18, 0.09), 0 18px 50px rgba(12, 15, 18, 0.15);
+  --shadow-pop: 0 30px 90px rgba(12, 15, 18, 0.24);
+}
+
+/* ---------- 尊重系统偏好（专注模式已按用户要求移除） ---------- */
+:root[data-motion="off"] { --dur-fast: 0s;
+    --dur: 0s;
+    --dur-slow: 0s;
+    --reveal-shift: 0px; }
+

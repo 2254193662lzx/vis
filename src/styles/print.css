@@ -1,0 +1,78 @@
+/* ============================================================
+ * print.css —— 打印/导出讲义
+ * 目标：打印时隐藏全部交互外壳，展开三个 Tab 的内容，得到一份完整讲义。
+ * ============================================================ */
+
+@media print {
+  .topbar,
+  .sidebar,
+  .outline,
+  .scrim,
+  .palette,
+  .gloss-card,
+  .tabs__ink,
+  .code-block__copy,
+  .section__mark,
+  .pager,
+  .site-footer,
+  .sky,
+  .landing__veil,
+  .globe,
+  .closing__bg,
+
+  :root {
+    --bg: #fff;
+    --surface: #fff;
+    --surface-2: #fff;
+    --surface-3: #f4f4f5;
+    --text: #000;
+    --text-2: #1a1a1a;
+    --text-3: #444;
+    --border: #c9c9c9;
+    --border-strong: #999;
+    --shadow-1: none;
+    --shadow-2: none;
+    --code-bg: #f7f7f8;
+    --code-bg-2: #efeff1;
+    --code-text: #111;
+    --code-cmt: #6b7280;
+    --code-str: #1a7f4b;
+    --code-kw: #4338ca;
+    --code-num: #9a5b00;
+    --code-fn: #0e7490;
+    --code-op: #333;
+    --code-line: #ddd;
+  }
+
+  .shell { display: block; padding: 0; max-width: none; }
+  .main { padding: 0; }
+
+  /* 三个 Tab 全部展开，形成完整讲义 */
+  .tab-panel { display: block !important; animation: none !important; }
+  .tab-panel + .tab-panel { margin-top: 14pt; }
+  .tabs { border-bottom: 1px solid #999; margin-bottom: 8pt; }
+  .tab-btn { display: none; }
+
+  .section { break-inside: avoid-page; page-break-inside: avoid; }
+  .section + .section { border-top: 1px solid #ccc; }
+  .section__head { break-after: avoid; }
+  .chapter-head { break-after: avoid; }
+
+  .code-block, .table-wrap, .block--keypoint, .demo-block {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .code-block pre { font-size: 9.5pt; white-space: pre-wrap; word-break: break-word; }
+  .code-block .ln--star { background: none; box-shadow: none; }
+
+  .demo-block { border-style: dashed; }
+  .demo-block::after {
+    content: "（交互演示，请在线查看）";
+    display: block;
+    font-size: 9pt;
+    color: #666;
+    margin-top: 6pt;
+  }
+
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 8.5pt; color: #555; }
+}

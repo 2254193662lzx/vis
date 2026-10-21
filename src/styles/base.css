@@ -1,0 +1,214 @@
+/* ============================================================
+ * base.css —— 重置、黄昏天空底色、玻璃工具类、自定义鼠标
+ *
+ * 背景与玻璃是一套的：毛玻璃需要有东西可模糊，所以底色不能是纯色。
+ * 底色做成固定的黄昏天空（地平线暖光 + 高层冷雾），玻璃面板浮在其上。
+ * ============================================================ */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--topbar-h) + 20px);
+  -webkit-text-size-adjust: 100%;
+}
+html[data-motion="off"] html { scroll-behavior: auto; }
+
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  font-feature-settings: "kern" 1, "liga" 1, "cv11" 1;
+}
+
+/* 黄昏天空：固定层，不随滚动重绘 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(118% 66% at 50% 108%, var(--sky-glow), transparent 62%),
+    radial-gradient(86% 58% at 10% -12%, color-mix(in srgb, var(--accent-2) 22%, transparent), transparent 62%),
+    radial-gradient(70% 50% at 92% 6%, color-mix(in srgb, var(--accent-3) 12%, transparent), transparent 66%),
+    linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 44%, var(--sky-3) 100%);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  line-height: 1.3;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.012em;
+}
+
+p { margin: 0; }
+ul, ol { margin: 0; padding: 0; }
+
+a {
+  color: var(--accent-ink);
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+a:hover { text-decoration: underline; }
+
+img, svg, canvas { max-width: 100%; }
+
+code, kbd, pre, samp { font-family: var(--font-mono); }
+
+:not(pre) > code {
+  background: var(--surface-3);
+  color: var(--accent-ink);
+  padding: 0.12em 0.42em;
+  border-radius: var(--radius-xs);
+  font-size: 0.875em;
+  word-break: break-word;
+}
+
+strong, b { font-weight: 650; color: var(--text); }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+hr { border: 0; border-top: 1px solid var(--border); margin: var(--sp-6) 0; }
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 34%, transparent);
+  color: var(--text);
+}
+
+/* 统一焦点可见性 —— 键盘可达性 */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-xs);
+}
+
+/* 滚动条 */
+* { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 20px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--accent-2); background-clip: content-box; }
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: var(--sp-4);
+  z-index: 999;
+  background: var(--accent);
+  color: #08162e;
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-sm);
+  font-weight: 650;
+  transition: top var(--dur-fast) var(--ease);
+}
+.skip-link:focus { top: var(--sp-3); }
+
+/* ---------------------------------------------------- 玻璃面板工具类 */
+/*
+ * 三件套：半透底 + 背景模糊 + 顶部一道高光。
+ * 只写前缀差异在 Safari 上会完全失效，所以 -webkit-backdrop-filter 必须保留。
+ */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--glass-highlight), var(--glass-shadow);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  /* 不支持背景模糊时退化为不透明面板，避免文字压在噪点上 */
+  .glass { background: color-mix(in srgb, var(--bg) 88%, var(--surface)); }
+}
+
+/* ---------------------------------------------------- 卡通箭头指针 */
+/*
+ * 指针形状（不是圆形光环）：圆润轮廓 + 深色描边 + 香槟金填充。
+ * 位置由 JS 写入 --cx/--cy，状态（悬停/按下）由属性切换，
+ * 两者都作用在同一条 transform 上，所以用 CSS 变量组合而不是互相覆盖。
+ */
+:root[data-cursor="on"],
+:root[data-cursor="on"] * { cursor: none; }
+/* 输入类控件保留原生光标：那里需要精确的插入点提示 */
+:root[data-cursor="on"] input,
+:root[data-cursor="on"] textarea,
+:root[data-cursor="on"] select { cursor: auto; }
+
+/*
+ * 位移与状态分离：
+ *  - .cursor-wrap 只负责「在哪」（transform: translate3d），**不加任何 transition**，
+ *    否则指针会明显滞后于真实位置 —— 上一版就是给它加了 0.16s 过渡。
+ *  - .cursor-arrow 只负责「什么状态」（缩放 / 歪头），这里才用短过渡。
+ */
+.cursor-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9000;
+  width: 30px;
+  height: 32px;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform;
+  transform: translate3d(var(--cx, -100px), var(--cy, -100px), 0);
+  transition: opacity var(--dur-fast) var(--ease);
+}
+.cursor-wrap[data-visible="1"] { opacity: 1; }
+.cursor-arrow {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: 4px 3px;      /* 缩放绕箭头尖端，视觉上不跑位 */
+  transform: scale(var(--cs, 1)) rotate(var(--cr, 0deg));
+  transition: transform 0.12s var(--ease-out);
+}
+.cursor-wrap[data-hover="1"] { --cs: 1.14; --cr: -6deg; }
+.cursor-wrap[data-press="1"] { --cs: 0.86; --cr: 2deg; }
+
+/* 拖尾小星：只在移动时出现 */
+.cursor-spark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 70%, transparent);
+  opacity: 0;
+  transition: opacity 0.2s var(--ease);
+  pointer-events: none;
+}
+.cursor-wrap[data-trail="1"] .cursor-spark { opacity: 0.5; }
+
+html[data-motion="off"] .cursor-wrap svg { transition: none; }
+html[data-motion="off"] .cursor-wrap[data-hover="1"] { --cs: 1; --cr: 0deg; }
+
+
+@media print {
+  body { background: #fff; font-size: 11pt; }
+  body::before { display: none; }
+}

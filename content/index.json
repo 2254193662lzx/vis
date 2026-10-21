@@ -1,0 +1,302 @@
+{
+  "chapters": [
+    {
+      "num": 1,
+      "slug": "lesson-01",
+      "title": {
+        "zh": "数据",
+        "en": "Data"
+      },
+      "sectionCount": 5,
+      "sections": [
+        {
+          "id": "ch-1-1",
+          "num": "1.1",
+          "slug": "1-1",
+          "title": {
+            "zh": "数据生成",
+            "en": "Data Generation"
+          }
+        },
+        {
+          "id": "ch-1-2",
+          "num": "1.2",
+          "slug": "1-2",
+          "title": {
+            "zh": "数据定义",
+            "en": "Data Definition"
+          }
+        },
+        {
+          "id": "ch-1-3",
+          "num": "1.3",
+          "slug": "1-3",
+          "title": {
+            "zh": "数据属性",
+            "en": "Data Attributes"
+          }
+        },
+        {
+          "id": "ch-1-4",
+          "num": "1.4",
+          "slug": "1-4",
+          "title": {
+            "zh": "数据变换",
+            "en": "Data Transformation"
+          }
+        },
+        {
+          "id": "ch-1-5",
+          "num": "1.5",
+          "slug": "1-5",
+          "title": {
+            "zh": "D3 数据选择器",
+            "en": "D3 Selectors"
+          }
+        }
+      ]
+    },
+    {
+      "num": 2,
+      "slug": "lesson-02",
+      "title": {
+        "zh": "数据可视化流程",
+        "en": "Viz Workflow"
+      },
+      "sectionCount": 4,
+      "sections": [
+        {
+          "id": "ch-2-1",
+          "num": "2.1",
+          "slug": "2-1",
+          "title": {
+            "zh": "数据可视化流程",
+            "en": "Visualization Workflow"
+          }
+        },
+        {
+          "id": "ch-2-2",
+          "num": "2.2",
+          "slug": "2-2",
+          "title": {
+            "zh": "数据分类树（d3.rollup 多层聚合）",
+            "en": "Data Transformation: Raw → Data Table"
+          }
+        },
+        {
+          "id": "ch-2-3",
+          "num": "2.3",
+          "slug": "2-3",
+          "title": {
+            "zh": "树布局（Reingold-Tilford 算法）",
+            "en": "Visual Mapping: Data → Visual Structure"
+          }
+        },
+        {
+          "id": "ch-2-4",
+          "num": "2.4",
+          "slug": "2-4",
+          "title": {
+            "zh": "树形列表渲染（classed + 事件委托）",
+            "en": "View Rendering & User Interaction"
+          }
+        }
+      ]
+    },
+    {
+      "num": 3,
+      "slug": "lesson-03",
+      "title": {
+        "zh": "色彩专题",
+        "en": "Color"
+      },
+      "sectionCount": 8,
+      "sections": [
+        {
+          "id": "ch-3-1",
+          "num": "3.1",
+          "slug": "3-1",
+          "title": {
+            "zh": "颜色模型基础",
+            "en": "Color Model Basics"
+          }
+        },
+        {
+          "id": "ch-3-2",
+          "num": "3.2",
+          "slug": "3-2",
+          "title": {
+            "zh": "colormap 三类选择",
+            "en": "Colormap: 3 Types"
+          }
+        },
+        {
+          "id": "ch-3-3",
+          "num": "3.3",
+          "slug": "3-3",
+          "title": {
+            "zh": "CIE Lab 色域图",
+            "en": "CIE Lab Gamut"
+          }
+        },
+        {
+          "id": "ch-3-4",
+          "num": "3.4",
+          "slug": "3-4",
+          "title": {
+            "zh": "色系搭配规则（5 大类）",
+            "en": "Color Harmony Rules (5 Types)"
+          }
+        },
+        {
+          "id": "ch-3-5",
+          "num": "3.5",
+          "slug": "3-5",
+          "title": {
+            "zh": "科研经典配色",
+            "en": "Classic Research Palettes"
+          }
+        },
+        {
+          "id": "ch-3-6",
+          "num": "3.6",
+          "slug": "3-6",
+          "title": {
+            "zh": "对错案例对比",
+            "en": "Right vs Wrong Comparison"
+          }
+        },
+        {
+          "id": "ch-3-7",
+          "num": "3.7",
+          "slug": "3-7",
+          "title": {
+            "zh": "鲜艳 + 低饱和 哲学生成器",
+            "en": "Vivid + Low-Sat Palette Generator"
+          }
+        },
+        {
+          "id": "ch-3-8",
+          "num": "3.8",
+          "slug": "3-8",
+          "title": {
+            "zh": "CVD 论文图测",
+            "en": "CVD Paper Figure Test"
+          }
+        }
+      ]
+    },
+    {
+      "num": 4,
+      "slug": "lesson-04",
+      "title": {
+        "zh": "低维数据可视化",
+        "en": "Low-Dim"
+      },
+      "sectionCount": 5,
+      "sections": [
+        {
+          "id": "ch-4-1",
+          "num": "4.1",
+          "slug": "4-1",
+          "title": {
+            "zh": "数据转换",
+            "en": "Data Transformation"
+          }
+        },
+        {
+          "id": "ch-4-2",
+          "num": "4.2",
+          "slug": "4-2",
+          "title": {
+            "zh": "坐标轴变换",
+            "en": "Axis Transformation"
+          }
+        },
+        {
+          "id": "ch-4-3",
+          "num": "4.3",
+          "slug": "4-3",
+          "title": {
+            "zh": "曲线拟合",
+            "en": "Curve Fitting"
+          }
+        },
+        {
+          "id": "ch-4-4",
+          "num": "4.4",
+          "slug": "4-4",
+          "title": {
+            "zh": "倾角感知（45° 黄金角）",
+            "en": "Slope Perception (45° Sweet Spot)"
+          }
+        },
+        {
+          "id": "ch-4-5",
+          "num": "4.5",
+          "slug": "4-5",
+          "title": {
+            "zh": "等值线（Marching Squares）",
+            "en": "Marching Squares (Contour Lines)"
+          }
+        }
+      ]
+    },
+    {
+      "num": 5,
+      "slug": "lesson-05",
+      "title": {
+        "zh": "时序数据可视化",
+        "en": "Time Series"
+      },
+      "sectionCount": 5,
+      "sections": [
+        {
+          "id": "ch-5-1",
+          "num": "5.1",
+          "slug": "5-1",
+          "title": {
+            "zh": "时间属性",
+            "en": "Time Attributes"
+          }
+        },
+        {
+          "id": "ch-5-2",
+          "num": "5.2",
+          "slug": "5-2",
+          "title": {
+            "zh": "标准时间可视化（折线图）",
+            "en": "Standard Time Viz (Line Chart)"
+          }
+        },
+        {
+          "id": "ch-5-3",
+          "num": "5.3",
+          "slug": "5-3",
+          "title": {
+            "zh": "日历热图（van Wijk）",
+            "en": "Calendar Heatmap (van Wijk)"
+          }
+        },
+        {
+          "id": "ch-5-4",
+          "num": "5.4",
+          "slug": "5-4",
+          "title": {
+            "zh": "周期时间可视化（阿基米德螺旋）",
+            "en": "Cyclic Time Viz (Archimedean Spiral)"
+          }
+        },
+        {
+          "id": "ch-5-5",
+          "num": "5.5",
+          "slug": "5-5",
+          "title": {
+            "zh": "Storyline 时间线（侏罗纪公园）",
+            "en": "Storyline (Jurassic Park)"
+          }
+        }
+      ]
+    }
+  ]
+}

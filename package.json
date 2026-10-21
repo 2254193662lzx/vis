@@ -1,0 +1,22 @@
+{
+  "name": "vis-rebuild",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "《可视化导论》课程网站重构 —— 内容迁移式重构（迁移复用内容与演示，重建外壳、多语言层与构建管线）",
+  "scripts": {
+    "migrate": "node tools/migrate.mjs",
+    "migrate:demos": "node tools/migrate-demos.mjs",
+    "verify": "node tools/verify-content.mjs",
+    "build": "node tools/build.mjs",
+    "budget": "node tools/budget.mjs",
+    "all": "node tools/migrate.mjs && node tools/migrate-demos.mjs && node tools/verify-content.mjs && node tools/build.mjs && node tools/budget.mjs",
+    "serve": "node tools/serve.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/instrument-serif": "^5.3.0",
+    "d3": "^7.9.0",
+    "linkedom": "^0.18.13"
+  }
+}

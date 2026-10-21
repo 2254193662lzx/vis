@@ -1,0 +1,26 @@
+/* ============================================================
+ * type-scale.css —— 字号缩放覆盖层
+ *
+ * 由顶栏的字号控件驱动 --fs-scale（4 档：90% / 100% / 112% / 125%）。
+ * 基础三档已在 tokens.css 里做为 calc；这里只补那些写死像素的排版元素。
+ * 必须放在 prose.css 之后加载，否则同优先级的原声明会把它压回去。
+ * ============================================================ */
+
+.section__title { font-size: calc(clamp(23px, 2.5vw, 30px) * var(--fs-scale)); }
+.chapter-head h1 { font-size: calc(clamp(28px, 3.6vw, 40px) * var(--fs-scale)); }
+.prose h3 { font-size: calc(17px * var(--fs-scale)); }
+.block--note { font-size: calc(15px * var(--fs-scale)); }
+.code-block pre { font-size: calc(13.5px * var(--fs-scale)); }
+.palette__input { font-size: calc(16.5px * var(--fs-scale)); }
+
+/* 门户 */
+.landing__title { font-size: calc(clamp(34px, 5.6vw, 78px) * var(--fs-scale)); }
+.landing__sub { font-size: calc(clamp(15px, 1.15vw, 17px) * var(--fs-scale)); }
+.landing__title { font-size: calc(clamp(24px, 2.6vw, 34px) * var(--fs-scale)); }
+.section-head h2 { font-size: calc(clamp(26px, 3.2vw, 42px) * var(--fs-scale)); }
+.card__title { font-size: calc(18px * var(--fs-scale)); }
+.acc__btn { font-size: calc(15px * var(--fs-scale)); }
+.page-head h1 { font-size: calc(26px * var(--fs-scale)); }
+
+/* 字号放大时读数更松一些，避免行间拥挤 */
+:root { --lh-body: calc(1.82 - (var(--fs-scale) - 1) * 0.18); }

@@ -1,0 +1,222 @@
+/* ============================================================
+ * motion.css —— 特效层（外壳 / 导航 / 主页；阅读面内不含环境动效）
+ *
+ * 三条硬约束：
+ *  1) 只动 transform / opacity（合成层），不动布局属性；
+ *  2) 时长取自 tokens.css 的 --dur-*，
+ *     prefers-reduced-motion 下归零即自然停用；
+ *  3) 无 JS 时不得隐藏任何内容（入场效果由 html[data-js="1"] 作用域限定）。
+ * ============================================================ */
+
+@keyframes lineRise {
+  from { transform: translate3d(0, 110%, 0); }
+  to   { transform: none; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translate3d(0, var(--reveal-shift), 0); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes panelIn {
+  from { opacity: 0; transform: translate3d(0, 6px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes paletteIn {
+  from { opacity: 0; transform: translate3d(0, -16px, 0) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes starGlow {
+  0%   { box-shadow: inset 3px 0 0 var(--code-star), inset 0 0 0 0 rgba(233, 222, 156, 0.26); }
+  60%  { box-shadow: inset 3px 0 0 var(--code-star), inset 0 0 0 14px rgba(233, 222, 156, 0); }
+  100% { box-shadow: inset 3px 0 0 var(--code-star), inset 0 0 0 0 rgba(233, 222, 156, 0); }
+}
+/* 入口按钮的呼吸光晕：整页只有一个按钮，用一层很慢的光晕把它标出来 */
+@keyframes ctaBreath {
+  0%   { box-shadow: var(--glass-highlight), 0 10px 40px rgba(2, 6, 20, 0.4), 0 0 0 0 color-mix(in srgb, var(--accent) 26%, transparent); }
+  60%  { box-shadow: var(--glass-highlight), 0 10px 40px rgba(2, 6, 20, 0.4), 0 0 46px 8px color-mix(in srgb, var(--accent) 0%, transparent); }
+  100% { box-shadow: var(--glass-highlight), 0 10px 40px rgba(2, 6, 20, 0.4), 0 0 0 0 color-mix(in srgb, var(--accent) 26%, transparent); }
+}
+
+/* ---------------------------------------------------- 主页 */
+html[data-js="1"] .landing__title .line > span { animation: lineRise 0.9s var(--ease-out) both; }
+html[data-js="1"] .landing__tagline,
+html[data-js="1"] .landing__sub,
+html[data-js="1"] .landing__cta,
+html[data-js="1"] .landing__scroll { animation: fadeUp 0.8s var(--ease-out) both; }
+html[data-js="1"] .landing__title .line > span { animation-delay: 0.14s; }
+html[data-js="1"] .landing__tagline { animation-delay: 0.3s; }
+html[data-js="1"] .landing__sub { animation-delay: 0.38s; }
+html[data-js="1"] .landing__cta { animation-delay: 0.46s; }
+html[data-js="1"] .landing__scroll { animation-delay: 0.6s; }
+.btn--glass { animation: ctaBreath 4.6s var(--ease) 1.4s infinite; }
+.btn--glass:hover { animation-play-state: paused; }
+
+/* ---------------------------------------------------- 滚动入场（仅标题级元素） */
+html[data-js="1"] .reveal { opacity: 0; }
+html[data-js="1"] .reveal.is-in { animation: fadeUp var(--dur-slow) var(--ease-out) both; }
+/* 阅读面内的段落/表格/代码块禁止入场动画：只管标题块 */
+html[data-js="1"] .prose > .reveal,
+html[data-js="1"] .tab-panel > .reveal:not(.block--keypoint) { animation: none; opacity: 1; }
+
+/* ---------------------------------------------------- 卡片：错落入场 + 悬停渐变描边 */
+html[data-js="1"] .cards .card { animation: fadeUp var(--dur-slow) var(--ease-out) both; }
+html[data-js="1"] .cards .card:nth-child(1) { animation-delay: 0.02s; }
+html[data-js="1"] .cards .card:nth-child(2) { animation-delay: 0.08s; }
+html[data-js="1"] .cards .card:nth-child(3) { animation-delay: 0.14s; }
+html[data-js="1"] .cards .card:nth-child(4) { animation-delay: 0.2s; }
+html[data-js="1"] .cards .card:nth-child(5) { animation-delay: 0.26s; }
+
+.card--chapter::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--grad-hot);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+  pointer-events: none;
+}
+.card--chapter:hover::before { opacity: 1; }
+
+/* 进度环：首次进入视口时描边生长 */
+.ring__fg { transition: stroke-dashoffset 1.1s var(--ease-out); }
+
+/* ---------------------------------------------------- Tab 面板切换 */
+.tab-panel.is-active { animation: panelIn var(--dur) var(--ease-out) both; }
+
+/* ---------------------------------------------------- 搜索面板 */
+.palette[data-open="1"] .palette__box { animation: paletteIn var(--dur) var(--ease-out) both; }
+
+/* ⭐ 关键行：仅入场时微光一次，不循环 */
+html[data-js="1"] .code-block .ln--star { animation: starGlow 1.1s var(--ease-out) 1 both; }
+
+/* ---------------------------------------------------- 页面切换（View Transitions） */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: fadeOutRoot 0.22s var(--ease) both; }
+::view-transition-new(root) { animation: fadeInRoot 0.34s var(--ease-out) both; }
+@keyframes fadeOutRoot { to { opacity: 0; } }
+@keyframes fadeInRoot { from { opacity: 0; } }
+
+html[data-motion="off"] .landing__title .line > span, html[data-motion="off"] .ring__fg { transition: none; }
+html[data-motion="off"][data-js="1"] .reveal { opacity: 1; }
+html[data-motion="off"] .landing__title .line { overflow: visible; }
+
+
+/* ============================================================
+ * 以下为第五轮新增的动效，原则是「由操作触发、说明变化」，
+ * 而不是给每个区块都来一次淡入上浮（那种遍地淡入正是模板腔）。
+ * ============================================================ */
+
+@keyframes rowIn {
+  from { opacity: 0; transform: translate3d(-8px, 0, 0); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes sweep {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+@keyframes railIn {
+  from { opacity: 0; transform: translate3d(14px, 0, 0); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes titleReveal {
+  from { clip-path: inset(0 0 108% 0); opacity: 0.2; }
+  to   { clip-path: inset(0 0 -8% 0); opacity: 1; }
+}
+
+/* ① 章节展开：小节逐行错落滑入（点哪一章，哪一章的行依次就位） */
+html[data-js="1"] .chap.is-open .sec { animation: rowIn 0.42s var(--ease-out) both; }
+html[data-js="1"] .chap.is-open .sec:nth-child(1) { animation-delay: 0.02s; }
+html[data-js="1"] .chap.is-open .sec:nth-child(2) { animation-delay: 0.05s; }
+html[data-js="1"] .chap.is-open .sec:nth-child(3) { animation-delay: 0.08s; }
+html[data-js="1"] .chap.is-open .sec:nth-child(4) { animation-delay: 0.11s; }
+html[data-js="1"] .chap.is-open .sec:nth-child(5) { animation-delay: 0.14s; }
+html[data-js="1"] .chap.is-open .sec:nth-child(6) { animation-delay: 0.17s; }
+html[data-js="1"] .chap.is-open .sec:nth-child(7) { animation-delay: 0.2s; }
+html[data-js="1"] .chap.is-open .sec:nth-child(8) { animation-delay: 0.23s; }
+
+/* ② 卡片悬停：顶边一道掠光扫过（比单纯上浮更能说明「这一块有反应」） */
+.card--chapter .card__sweep {
+  position: absolute;
+  top: 0; left: 0;
+  height: 1px;
+  width: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.card--chapter .card__sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  transform: translateX(-100%);
+  opacity: 0;
+}
+.card--chapter:hover .card__sweep::after { animation: sweep 0.9s var(--ease-out); opacity: 1; }
+
+/* ③ 搜索结果逐条错落（打开面板、每次输入都有反馈） */
+.palette[data-open="1"] .palette__item { animation: rowIn 0.3s var(--ease-out) both; }
+
+/* ④ 小节标题的遮罩揭示：滚到该小节时标题从下往上「刷」出来 */
+html[data-js="1"] .section__title,
+html[data-js="1"] .chapter-head h1 { animation: titleReveal 0.7s var(--ease-out) both; animation-timeline: view(); animation-range: entry 8% cover 34%; }
+
+/* ⑤ 章节页右栏三块卡片依次滑入 */
+html[data-js="1"] .rail__card { animation: railIn 0.5s var(--ease-out) both; }
+html[data-js="1"] .rail__card:nth-child(1) { animation-delay: 0.06s; }
+html[data-js="1"] .rail__card:nth-child(2) { animation-delay: 0.14s; }
+html[data-js="1"] .rail__card:nth-child(3) { animation-delay: 0.22s; }
+
+/* ⑥ 章节行的圆点：展开时轻微脉动一次 */
+@keyframes dotPulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.5); }
+  100% { transform: scale(1); }
+}
+.chap.is-open .chap__dot { animation: dotPulse 0.5s var(--ease-out); }
+
+/* ⑦ 侧栏当前小节：指示条与文字一起轻微右移，强调「就是这一节」 */
+.sections__link[aria-current="true"] { transform: translateX(2px); }
+
+html[data-motion="off"][data-js="1"] .chap.is-open .sec, html[data-motion="off"][data-js="1"] .section__title, html[data-motion="off"][data-js="1"] .chapter-head h1, html[data-motion="off"][data-js="1"] .rail__card, html[data-motion="off"] .palette[data-open="1"] .palette__item, html[data-motion="off"] .chap.is-open .chap__dot, html[data-motion="off"] .card--chapter:hover .card__sweep::after { animation: none !important; }
+html[data-motion="off"] .sections__link[aria-current="true"] { transform: none; }
+
+
+/* ============================================================
+ * 翻书式分区过渡（课程总览页）
+ *
+ * 这一段是「翻页」而不是「淡入」：每块内容从上方微微掀起、带一点透视缩短，
+ * 落到正常位置，过程中顶边压出一道翻页阴影。滚动驱动（animation-timeline: view()），
+ * 所以速度完全跟着手指/滚轮走，不会自己播。
+ * 不支持滚动的浏览器会退化成「播一次」，视觉上仍然成立。
+ * ============================================================ */
+@keyframes pageLay {
+  from { transform: translate3d(0, 34px, 0); opacity: 0.35; }
+  55%  { opacity: 1; }
+  to   { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+@keyframes foldShade {
+  0%   { opacity: 0.9; transform: scaleY(1); }
+  100% { opacity: 0; transform: scaleY(0.35); }
+}
+
+html[data-js="1"] .page-turn {
+  position: relative;
+  transform-origin: 50% 0%;
+  animation: pageLay 1.05s var(--ease-out) both;
+  animation-timeline: view();
+  animation-range: entry 5% entry 92%;
+}
+
+
+/* 轻吸附：接近段落边界时帮一把，但不强制（proximity），不会打断阅读 */
+html[data-snap="1"] { scroll-snap-type: y proximity; }
+html[data-snap="1"] .section-block { scroll-snap-align: start; }
+
+html[data-motion="off"][data-js="1"] .page-turn { animation: none !important; }
+

@@ -1,0 +1,18 @@
+{
+  "_comment": "编辑层：修正迁移自旧站的内容问题。迁移脚本只做无损搬运，不改内容；语义层面的修正集中在此，便于审计与回溯。",
+  "_appliedBy": "tools/build.mjs",
+  "sectionTitles": {
+    "lesson-02/2-2": {
+      "en": "Classification Tree (multi-level d3.rollup)",
+      "_why": "旧站 i18n 词典中该键的英文为 “Data Transformation: Raw → Data Table”，与中文标题「数据分类树」不符，属旧站过期译法。"
+    },
+    "lesson-02/2-3": {
+      "en": "Tree Layout (Reingold-Tilford)",
+      "_why": "旧英译为 “Visual Mapping: Data → Visual Structure”，与中文「树布局（Reingold-Tilford 算法）」不符。"
+    },
+    "lesson-02/2-4": {
+      "en": "Tree-List Rendering (classed + event delegation)",
+      "_why": "旧英译为 “View Rendering & User Interaction”，与中文「树形列表渲染」不符。"
+    }
+  }
+}

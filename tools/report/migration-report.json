@@ -1,0 +1,273 @@
+{
+  "lessons": [
+    {
+      "lesson": "lesson-01",
+      "num": 1,
+      "baseline": {
+        "zhNodes": 108,
+        "enNodes": 108,
+        "li": 26,
+        "tables": 10,
+        "pre": 13,
+        "demos": 5,
+        "zhChars": 4481,
+        "enWords": 1815
+      },
+      "extracted": {
+        "sections": 5,
+        "blocks": 96,
+        "code": 13,
+        "demos": 5,
+        "tables": 5,
+        "lists": 7,
+        "unpaired": 0
+      },
+      "sections": [
+        {
+          "id": "ch-1-1",
+          "blocks": 20,
+          "unpaired": []
+        },
+        {
+          "id": "ch-1-2",
+          "blocks": 16,
+          "unpaired": []
+        },
+        {
+          "id": "ch-1-3",
+          "blocks": 19,
+          "unpaired": []
+        },
+        {
+          "id": "ch-1-4",
+          "blocks": 20,
+          "unpaired": []
+        },
+        {
+          "id": "ch-1-5",
+          "blocks": 21,
+          "unpaired": []
+        }
+      ]
+    },
+    {
+      "lesson": "lesson-02",
+      "num": 2,
+      "baseline": {
+        "zhNodes": 121,
+        "enNodes": 121,
+        "li": 30,
+        "tables": 4,
+        "pre": 11,
+        "demos": 4,
+        "zhChars": 5769,
+        "enWords": 2229
+      },
+      "extracted": {
+        "sections": 4,
+        "blocks": 110,
+        "code": 11,
+        "demos": 4,
+        "tables": 2,
+        "lists": 9,
+        "unpaired": 0
+      },
+      "sections": [
+        {
+          "id": "ch-2-1",
+          "blocks": 14,
+          "unpaired": []
+        },
+        {
+          "id": "ch-2-2",
+          "blocks": 27,
+          "unpaired": []
+        },
+        {
+          "id": "ch-2-3",
+          "blocks": 35,
+          "unpaired": []
+        },
+        {
+          "id": "ch-2-4",
+          "blocks": 34,
+          "unpaired": []
+        }
+      ]
+    },
+    {
+      "lesson": "lesson-03",
+      "num": 3,
+      "baseline": {
+        "zhNodes": 128,
+        "enNodes": 128,
+        "li": 61,
+        "tables": 0,
+        "pre": 12,
+        "demos": 8,
+        "zhChars": 3153,
+        "enWords": 1418
+      },
+      "extracted": {
+        "sections": 8,
+        "blocks": 96,
+        "code": 12,
+        "demos": 8,
+        "tables": 0,
+        "lists": 18,
+        "unpaired": 0
+      },
+      "sections": [
+        {
+          "id": "ch-3-1",
+          "blocks": 16,
+          "unpaired": []
+        },
+        {
+          "id": "ch-3-2",
+          "blocks": 13,
+          "unpaired": []
+        },
+        {
+          "id": "ch-3-3",
+          "blocks": 14,
+          "unpaired": []
+        },
+        {
+          "id": "ch-3-4",
+          "blocks": 9,
+          "unpaired": []
+        },
+        {
+          "id": "ch-3-5",
+          "blocks": 13,
+          "unpaired": []
+        },
+        {
+          "id": "ch-3-6",
+          "blocks": 9,
+          "unpaired": []
+        },
+        {
+          "id": "ch-3-7",
+          "blocks": 11,
+          "unpaired": []
+        },
+        {
+          "id": "ch-3-8",
+          "blocks": 11,
+          "unpaired": []
+        }
+      ]
+    },
+    {
+      "lesson": "lesson-04",
+      "num": 4,
+      "baseline": {
+        "zhNodes": 64,
+        "enNodes": 64,
+        "li": 20,
+        "tables": 0,
+        "pre": 10,
+        "demos": 5,
+        "zhChars": 2354,
+        "enWords": 1012
+      },
+      "extracted": {
+        "sections": 5,
+        "blocks": 58,
+        "code": 10,
+        "demos": 5,
+        "tables": 0,
+        "lists": 5,
+        "unpaired": 0
+      },
+      "sections": [
+        {
+          "id": "ch-4-1",
+          "blocks": 12,
+          "unpaired": []
+        },
+        {
+          "id": "ch-4-2",
+          "blocks": 12,
+          "unpaired": []
+        },
+        {
+          "id": "ch-4-3",
+          "blocks": 12,
+          "unpaired": []
+        },
+        {
+          "id": "ch-4-4",
+          "blocks": 11,
+          "unpaired": []
+        },
+        {
+          "id": "ch-4-5",
+          "blocks": 11,
+          "unpaired": []
+        }
+      ]
+    },
+    {
+      "lesson": "lesson-05",
+      "num": 5,
+      "baseline": {
+        "zhNodes": 86,
+        "enNodes": 86,
+        "li": 24,
+        "tables": 0,
+        "pre": 14,
+        "demos": 5,
+        "zhChars": 3272,
+        "enWords": 1472
+      },
+      "extracted": {
+        "sections": 5,
+        "blocks": 81,
+        "code": 14,
+        "demos": 5,
+        "tables": 0,
+        "lists": 6,
+        "unpaired": 0
+      },
+      "sections": [
+        {
+          "id": "ch-5-1",
+          "blocks": 15,
+          "unpaired": []
+        },
+        {
+          "id": "ch-5-2",
+          "blocks": 15,
+          "unpaired": []
+        },
+        {
+          "id": "ch-5-3",
+          "blocks": 17,
+          "unpaired": []
+        },
+        {
+          "id": "ch-5-4",
+          "blocks": 17,
+          "unpaired": []
+        },
+        {
+          "id": "ch-5-5",
+          "blocks": 17,
+          "unpaired": []
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "sections": 27,
+    "blocks": 441,
+    "code": 60,
+    "demos": 27,
+    "tables": 7,
+    "lists": 45,
+    "unpaired": 0
+  }
+}
