@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://cinger007.github.io/vis/sitemap.xml
